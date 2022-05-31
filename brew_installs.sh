@@ -33,6 +33,7 @@ casks_to_install=(
     'transmission'
     'trezor-bridge'
     'trezor-suite'
+    'visual-studio-code'
     'vlc'
 )
 
