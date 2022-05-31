@@ -50,6 +50,7 @@ packages_to_install=(
     'source-highlight'
     'tmux'
     'wget'
+    'zsh-syntax-highlighting'
 )
 
 # TODO document this
