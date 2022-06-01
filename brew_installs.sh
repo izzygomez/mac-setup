@@ -48,6 +48,7 @@ packages_to_install=(
     'libusb'
     'mosh'
     'source-highlight'
+    'thefuck'
     'tmux'
     'wget'
     'zsh-syntax-highlighting'
