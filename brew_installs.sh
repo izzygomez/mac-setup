@@ -12,6 +12,8 @@ casks_to_install=(
     'anki'
     'atom'
     'authy'
+    # https://beardedspice.github.io/
+    'beardedspice'
     'betterdiscord-installer'
     'dropbox'
     'expressvpn'
