@@ -22,7 +22,6 @@ casks_to_install=(
     'google-chrome'
     'google-drive'
     'iterm2'
-    'keybase'  # delete this? seems to not be working
     'kyokan-bob'
     'lastpass'
     'musescore'
