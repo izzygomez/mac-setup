@@ -51,6 +51,7 @@ packages_to_install=(
     'source-highlight'
     'thefuck'
     'tmux'
+    'tree'
     'wget'
     'zsh-syntax-highlighting'
 )
