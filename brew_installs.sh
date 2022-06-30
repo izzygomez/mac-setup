@@ -40,6 +40,7 @@ casks_to_install=(
 
 # TODO figure out what to run to enumerate this list
 packages_to_install=(
+    'chruby' # from https://jekyllrb.com/docs/installation/macos/
     'emacs'
     'ffmpeg'
     'git'
@@ -48,6 +49,7 @@ packages_to_install=(
     'imagemagick'
     'libusb'
     'mosh'
+    'ruby-install' # from https://jekyllrb.com/docs/installation/macos/
     'source-highlight'
     'thefuck'
     'tmux'
