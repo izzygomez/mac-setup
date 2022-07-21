@@ -7,14 +7,25 @@
 # brew upgrade --cask
 #   - upgrade existing casks
 
+# TODO consider adding colors to my `echo` commands
+
+echo 'First, updating & upgrading Homebrew...\n'
+echo 'running: brew update\n'
+brew update
+echo 'running: brew outdated\n'
+brew outdated
+echo 'running: brew upgrade\n'
+brew upgrade
+
 # For a full list, see https://formulae.brew.sh/cask/
 casks_to_install=(
+    'alfred'
     'anki'
     'atom'
     'authy'
-    # https://beardedspice.github.io/
-    'beardedspice'
+    'beardedspice' # https://beardedspice.github.io/
     'betterdiscord-installer'
+    'contexts'
     'dropbox'
     'expressvpn'
     'firefox'
@@ -58,12 +69,12 @@ packages_to_install=(
     'zsh-syntax-highlighting'
 )
 
-# TODO document this
+echo '================================================================================'
+echo '================================================================================'
 echo 'Installing Homebrew casks...\n'
 for cask in ${casks_to_install[@]}; do
     echo 'running: brew install --cask' $cask '\n'
     brew install --cask $cask
-    # echo '..where the magic *would* happen..'
     echo '\ndone!\n'
 done
 
