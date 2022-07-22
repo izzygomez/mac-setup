@@ -24,6 +24,7 @@ casks_to_install=(
     'atom'
     'authy'
     'beardedspice' # https://beardedspice.github.io/
+    'beekeeper-studio'
     'betterdiscord-installer'
     'contexts'
     'dropbox'
