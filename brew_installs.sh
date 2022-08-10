@@ -82,6 +82,7 @@ packages_to_install=(
     'ffmpeg'
     'gh'
     'git'
+    'grep'
     'htop'
     'imagemagick'
     'libusb'
@@ -93,6 +94,16 @@ packages_to_install=(
     'tree'
     'wget'
     'zsh-syntax-highlighting'
+    # TODO put this into own branch; consider moving into seperate package list?
+    #########################################
+    # Izzy's Yuzu MBP User Configuration
+    #########################################
+    'nvm'
+    'skeema/tap/skeema'
+    'solidity'
+    'sqlc'
+    'yarn'
+
 )
 
 # TODO document these sections some more, e.g. still need to figure out how
