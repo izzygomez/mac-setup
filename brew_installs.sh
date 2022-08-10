@@ -93,6 +93,7 @@ packages_to_install=(
     'tmux'
     'tree'
     'wget'
+    'zsh-autosuggestions'
     'zsh-syntax-highlighting'
     # TODO put this into own branch; consider moving into seperate package list?
     #########################################
