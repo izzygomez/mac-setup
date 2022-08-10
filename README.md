@@ -1,6 +1,6 @@
-# New Laptop Setup
+# Laptop Setup
 
-Scripts & other resources related to setting up new laptop.
+Scripts related to setting up & maintaining an OSX environment with desired apps & packages.
 
 ## Files
 
@@ -14,6 +14,7 @@ Scripts & other resources related to setting up new laptop.
 
 ## TODOs
 
+* Revisit the need for `first_time.sh`. Specifically, seems like a convoluted use-case given that `brew_install.sh` is something that is continually updated & re-ran as packages are added.
 * Look into making it so that deleted casks/packages are removed when `brew_install.sh` is run next time.
 * Figure out how to add other parts of [jekyll installation](https://jekyllrb.com/docs/installation/macos/) in first_time.sh, e.g. running `gem install jekyll` automatically, figuring out if `sudo` is needed, etc.
   * Also, per [this](https://github.com/github/pages-gem/issues/752) & [this](https://github.com/jekyll/jekyll/issues/8523), it appears that I need to run `gem install webrick` to get everything working.
