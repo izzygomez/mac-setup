@@ -1,11 +1,37 @@
 #!/bin/zsh
 
+################################################################################
 # Usage Instructions
-# ./brew_installs.sh
-#   - run this script
+################################################################################
 #
-# brew upgrade --cask
-#   - upgrade existing casks
+# Run this script:
+# `./brew_installs.sh`
+#
+# Upgrade existing casks:
+# `brew upgrade --cask`
+#
+################################################################################
+# Other useful commands
+################################################################################
+#
+# To enumerate list of packages (with descriptions) that have been installed,
+# run the following command (https://apple.stackexchange.com/a/154750):
+#
+# `brew leaves --installed-on-request | xargs -n1 brew desc`
+#
+# List all brew formula:
+# `brew list --formula`
+#
+# List all brew casks:
+# `brew list --cask`
+#
+# To remove all formula installed by Homebrew, run the following command:
+# `brew remove --force $(brew list --formula)`
+# This could be useful for "resetting" a setup by removing packages &
+# re-installing them immediately after by running this script. (see
+# https://apple.stackexchange.com/a/339096)
+#
+################################################################################
 
 # TODO consider adding colors to my `echo` commands
 
@@ -50,13 +76,12 @@ casks_to_install=(
     'vlc'
 )
 
-# TODO figure out what to run to enumerate this list
 packages_to_install=(
     'chruby' # from https://jekyllrb.com/docs/installation/macos/
     'emacs'
     'ffmpeg'
-    'git'
     'gh'
+    'git'
     'htop'
     'imagemagick'
     'libusb'
@@ -70,6 +95,8 @@ packages_to_install=(
     'zsh-syntax-highlighting'
 )
 
+# TODO document these sections some more, e.g. still need to figure out how
+# to download python/ruby/etc & install correctly/not-manually
 echo '================================================================================'
 echo '================================================================================'
 echo 'Installing Homebrew casks...\n'
@@ -79,19 +106,16 @@ for cask in ${casks_to_install[@]}; do
     echo '\ndone!\n'
 done
 
-# TODO document this
-# note: still need to figure out how to download python & ruby
 echo '================================================================================'
 echo '================================================================================'
 echo 'Installing Homebrew packages...\n'
 for package in ${packages_to_install[@]}; do
     echo 'running: brew install' $package '\n'
     brew install $package
-    # echo '..where the magic *would* happen..'
     echo '\ndone!\n'
 done
 
 echo '================================================================================'
 echo '================================================================================'
 
-echo 'TODO write out message indicating there might be post-install steps based on output above.'
+echo 'Scroll up & read output above, as there might be post-install steps'
