@@ -87,6 +87,7 @@ packages_to_install=(
     'imagemagick'
     'libusb'
     'mosh'
+    'pre-commit'
     'ruby-install' # from https://jekyllrb.com/docs/installation/macos/
     'source-highlight'
     'thefuck'
