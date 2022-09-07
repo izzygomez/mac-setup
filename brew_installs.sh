@@ -51,7 +51,6 @@ casks_to_install=(
     'authy'
     'beardedspice' # https://beardedspice.github.io/
     'beekeeper-studio'
-    'betterdiscord-installer'
     'contexts'
     'dropbox'
     'expressvpn'
