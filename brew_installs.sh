@@ -56,6 +56,7 @@ casks_to_install=(
     'expressvpn'
     'firefox'
     'flux'
+    'freedom'
     'google-chrome'
     'google-drive'
     'iterm2'
