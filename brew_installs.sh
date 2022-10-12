@@ -68,6 +68,7 @@ casks_to_install=(
     'rocket'
     'spotify'
     'steam'
+    'telegram'
     'tor-browser'
     'transmission'
     'trezor-bridge'
