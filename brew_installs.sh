@@ -52,6 +52,7 @@ casks_to_install=(
     'beardedspice' # https://beardedspice.github.io/
     'beekeeper-studio'
     'contexts'
+    'discord'
     'dropbox'
     'expressvpn'
     'firefox'
