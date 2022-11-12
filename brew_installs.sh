@@ -7,6 +7,9 @@
 # Run this script:
 # `./brew_installs.sh`
 #
+# Upgrade existing packages (already run by this script):
+# `brew upgrade`
+#
 # Upgrade existing casks:
 # `brew upgrade --cask`
 #
@@ -36,10 +39,13 @@
 # TODO consider adding colors to my `echo` commands
 
 echo 'First, updating & upgrading Homebrew...\n'
+# updates brew
 echo 'running: brew update\n'
 brew update
+# list packages in need of upgrading
 echo 'running: brew outdated\n'
 brew outdated
+# upgrade packages
 echo 'running: brew upgrade\n'
 brew upgrade
 
