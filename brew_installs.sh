@@ -97,6 +97,7 @@ packages_to_install=(
     'libusb'
     'mosh'
     'pre-commit'
+    'pyenv'
     'ruby-install' # from https://jekyllrb.com/docs/installation/macos/
     'source-highlight'
     'thefuck'
