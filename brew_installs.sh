@@ -91,31 +91,25 @@ packages_to_install=(
     'ffmpeg'
     'gh'
     'git'
+    'go'
     'grep'
     'htop'
     'imagemagick'
     'libusb'
     'mosh'
+    'nvm'
     'pre-commit'
     'pyenv'
     'ruby-install' # from https://jekyllrb.com/docs/installation/macos/
+    'solidity'
     'source-highlight'
     'thefuck'
     'tmux'
     'tree'
     'wget'
+    'yarn'
     'zsh-autosuggestions'
     'zsh-syntax-highlighting'
-    # TODO put this into own branch; consider moving into seperate package list?
-    #########################################
-    # Izzy's Yuzu MBP User Configuration
-    #########################################
-    'nvm'
-    'skeema/tap/skeema'
-    'solidity'
-    'sqlc'
-    'yarn'
-
 )
 
 # TODO document these sections some more, e.g. still need to figure out how
