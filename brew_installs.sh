@@ -98,6 +98,7 @@ packages_to_install=(
     'libusb'
     'mosh'
     'nvm'
+    'poetry'
     'pre-commit'
     'pyenv'
     'ruby-install' # from https://jekyllrb.com/docs/installation/macos/
