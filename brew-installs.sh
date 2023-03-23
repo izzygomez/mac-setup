@@ -136,12 +136,6 @@ else
     echo $END$RED$update_homebrew$END
 fi
 echo -n $BOLD'\t'
-if read -rqs "cleanup_homebrew?Cleanup Homebrew? [y/N]: "; then
-    echo $END$GREEN$cleanup_homebrew$END
-else
-    echo $END$RED$cleanup_homebrew$END
-fi
-echo -n $BOLD'\t'
 if read -qs "upgrade_packages?Upgrade casks & packages? [y/N]: "; then
     echo $END$GREEN$upgrade_packages$END
 else
@@ -159,8 +153,15 @@ if read -qs "install_packages?Install packages? [y/N]: "; then
 else
     echo $END$RED$install_packages$END
 fi
+echo -n $BOLD'\t'
+if read -rqs "cleanup_homebrew?Cleanup Homebrew? [y/N]: "; then
+    echo $END$GREEN$cleanup_homebrew$END
+else
+    echo $END$RED$cleanup_homebrew$END
+fi
 
-if [[ $update_homebrew != y && $cleanup_homebrew != y && $upgrade_packages != y && $install_casks != y && $install_packages != y ]]
+
+if [[ $update_homebrew != y && $upgrade_packages != y && $install_casks != y && $install_packages != y && $cleanup_homebrew != y ]]
 then
     echo '\n\t✨ Did nothing ✨'
     exit 0
@@ -175,19 +176,6 @@ if [[ $update_homebrew = y ]]; then
     echo $GREEN$BOLD$UNDERLINE'Updating Homebrew...\n'$END
     echo $BOLD'\trunning '$PURPLE'brew update\n'$END
     brew update
-fi
-
-### Cleanup Homebrew (see https://docs.brew.sh/Manpage)
-if [[ $cleanup_homebrew = y ]]; then
-    echo $LINE_SEPARATOR
-
-    echo $GREEN$BOLD$UNDERLINE'Cleaning up Homebrew...\n'$END
-
-    echo $BOLD'\trunning '$PURPLE'brew autoremove\n'$END
-    brew autoremove
-
-    echo $BOLD'\n\trunning '$PURPLE'brew cleanup --prune=all -s\n'$END
-    brew cleanup --prune=all -s
 fi
 
 ### Upgrade packages
@@ -259,10 +247,23 @@ if [[ $install_packages = y ]]; then
     echo $BOLD'Newly installed packages: '$END${packages_installed[*]}
 fi
 
+### Cleanup Homebrew (see https://docs.brew.sh/Manpage)
+if [[ $cleanup_homebrew = y ]]; then
+    echo $LINE_SEPARATOR
+
+    echo $GREEN$BOLD$UNDERLINE'Cleaning up Homebrew...\n'$END
+
+    echo $BOLD'\trunning '$PURPLE'brew autoremove\n'$END
+    brew autoremove
+
+    echo $BOLD'\n\trunning '$PURPLE'brew cleanup --prune=all -s\n'$END
+    brew cleanup --prune=all -s
+fi
+
 ### Post-install messsage
 if [[ $install_casks = y || $install_packages = y ]]; then
     echo $LINE_SEPARATOR
-    echo $GREEN$BOLD$UNDERLINE'Scroll up & read console output above, since there might be post-install steps.'$END
+    echo $GREEN$BOLD$UNDERLINE'Installed casks and/or packages:'$END$BOLD'\nscroll up & read console output since there might be post-install steps.'$END
 fi
 
 exit 0
