@@ -19,7 +19,7 @@
 # To enumerate list of packages (with descriptions) that have been installed,
 # run the following command (https://apple.stackexchange.com/a/154750):
 #
-# `brew leaves --installed-on-request | xargs -n1 brew desc`
+# `brew leaves --installed-on-request | xargs -n1 brew desc --eval-all`
 #
 # List all brew formula:
 # `brew list --formula`
@@ -263,7 +263,7 @@ fi
 ### Post-install messsage
 if [[ $install_casks = y || $install_packages = y ]]; then
     echo $LINE_SEPARATOR
-    echo $GREEN$BOLD$UNDERLINE'Installed casks and/or packages:'$END$BOLD'\nscroll up & read console output since there might be post-install steps.'$END
+    echo $GREEN$BOLD$UNDERLINE'Installed casks and/or packages:\n\n'$END$BOLD'Scroll up & read console output since there might be post-install steps.'$END
 fi
 
 exit 0
