@@ -150,6 +150,7 @@ LINE_SEPARATOR='\n==============================================================
 ### Update Homebrew
 if [[ $update_homebrew = y ]]; then
     echo $LINE_SEPARATOR
+
     echo $BOLD$UNDERLINE'Updating Homebrew...\n'$END
     echo $BOLD'\trunning '$PURPLE'brew update\n'$END
     brew update
@@ -158,9 +159,11 @@ fi
 ### Upgrade packages
 if [[ $upgrade_packages = y ]]; then
     echo $LINE_SEPARATOR
+
     echo $BOLD$UNDERLINE'Listing packages in need of upgrading...\n'$END
     echo $BOLD'\trunning '$PURPLE'brew outdated\n'$END
     brew outdated
+
     echo $BOLD$UNDERLINE'Upgrading packages...\n'$END
     echo $BOLD'\trunning '$PURPLE'brew upgrade\n'$END
     brew upgrade
@@ -169,31 +172,63 @@ fi
 ### Install casks
 # TODO document these sections some more, e.g. still need to figure out how
 # to download python/ruby/etc & install correctly/not-manually
-if [[ $install_casks = y ]]; then
-    echo $LINE_SEPARATOR
-    echo $BOLD$UNDERLINE'Installing Homebrew casks...\n'$END
-    for cask in ${casks_to_install[@]}; do
+cask=""
+casks_already_installed=()
+casks_installed=()
+install_cask() {
+    if brew list --cask $cask &> /dev/null; then
+        casks_already_installed+=( $cask )
+    else
 	echo $BOLD'\trunning '$PURPLE'brew install --cask '$cask'\n'$END
 	brew install --cask $cask
 	echo -n '\n'
+	casks_installed+=( $cask )
+    fi
+}
+if [[ $install_casks = y ]]; then
+    echo $LINE_SEPARATOR
+
+    echo $BOLD$UNDERLINE'Installing Homebrew casks...\n'$END
+    for c in ${casks_to_install[@]}; do
+	cask=$c
+	install_cask
     done
+
+    echo $BOLD'Already installed casks: '$END${casks_already_installed[*]}'\n'
+    echo $BOLD'Newly installed casks: '$END${casks_installed[*]}
 fi
 
 ### Install packages
-if [[ $install_packages = y ]]; then
-    echo $LINE_SEPARATOR
-    echo $BOLD$UNDERLINE'Installing Homebrew packages...\n'$END
-    for package in ${packages_to_install[@]}; do
+package=""
+packages_already_installed=()
+packages_installed=()
+install_package() {
+    if brew list $package &> /dev/null; then
+	packages_already_installed+=( $package )
+    else
 	echo $BOLD'\trunning '$PURPLE'brew install '$package'\n'$END
 	brew install $package
 	echo -n '\n'
+	packages_installed+=( $package )
+    fi
+}
+if [[ $install_packages = y ]]; then
+    echo $LINE_SEPARATOR
+
+    echo $BOLD$UNDERLINE'Installing Homebrew packages...\n'$END
+    for p in ${packages_to_install[@]}; do
+	package=$p
+	install_package
     done
+
+    echo $BOLD'Already installed packages: '$END${packages_already_installed[*]}'\n'
+    echo $BOLD'Newly installed packages: '$END${packages_installed[*]}
 fi
 
 ### Post-install messsage
 if [[ $install_casks = y || $install_packages = y ]]; then
     echo $LINE_SEPARATOR
-    echo $BOLD'Scroll up & read console output above, since there might be post-install steps.'$END
+    echo $BOLD$UNDERLINE'Scroll up & read console output above, since there might be post-install steps.'$END
 fi
 
 echo $LINE_SEPARATOR
