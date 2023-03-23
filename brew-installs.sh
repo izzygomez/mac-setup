@@ -116,32 +116,44 @@ if ! command -v brew &> /dev/null; then
     exit 1
 fi
 
+echo -n $GREEN
+echo '
+             ___   ___   ____  _
+            | |_) | |_) | |_  \ \    /
+            |_|_) |_| \ |_|__  \_\/\/
+     _   _      __  _____   __    _     _     __
+    | | | |\ | ( (`  | |   / /\  | |   | |   ( (`
+    |_| |_| \| _)_)  |_|  /_/--\ |_|__ |_|__ _)_)
+
+'
+echo -n $END
+
 ### Prompt user for actions to take
-echo -n $BOLD
+echo -n $BOLD'\t'
 if read -rqs "update_homebrew?Update Homebrew? [y/N]: "; then
     echo $END$GREEN$update_homebrew$END
 else
     echo $END$RED$update_homebrew$END
 fi
-echo -n $BOLD
+echo -n $BOLD'\t'
 if read -rqs "cleanup_homebrew?Cleanup Homebrew? [y/N]: "; then
     echo $END$GREEN$cleanup_homebrew$END
 else
     echo $END$RED$cleanup_homebrew$END
 fi
-echo -n $BOLD
+echo -n $BOLD'\t'
 if read -qs "upgrade_packages?Upgrade packages? [y/N]: "; then
     echo $END$GREEN$upgrade_packages$END
 else
     echo $END$RED$upgrade_packages$END
 fi
-echo -n $BOLD
+echo -n $BOLD'\t'
 if read -qs "install_casks?Install casks? [y/N]: "; then
     echo $END$GREEN$install_casks$END
 else
     echo $END$RED$install_casks$END
 fi
-echo -n $BOLD
+echo -n $BOLD'\t'
 if read -qs "install_packages?Install packages? [y/N]: "; then
     echo $END$GREEN$install_packages$END
 else
@@ -150,17 +162,17 @@ fi
 
 if [[ $update_homebrew != y && $cleanup_homebrew != y && $upgrade_packages != y && $install_casks != y && $install_packages != y ]]
 then
-    echo '\n✨ Did nothing ✨'
+    echo '\n\t✨ Did nothing ✨'
     exit 0
 fi
 
-LINE_SEPARATOR='\n================================================================================\n'
+LINE_SEPARATOR=$BOLD'\n--------------------------------------------------------------------------------\n'$END
 
 ### Update Homebrew
 if [[ $update_homebrew = y ]]; then
     echo $LINE_SEPARATOR
 
-    echo $BOLD$UNDERLINE'Updating Homebrew...\n'$END
+    echo $GREEN$BOLD$UNDERLINE'Updating Homebrew...\n'$END
     echo $BOLD'\trunning '$PURPLE'brew update\n'$END
     brew update
 fi
@@ -169,7 +181,7 @@ fi
 if [[ $cleanup_homebrew = y ]]; then
     echo $LINE_SEPARATOR
 
-    echo $BOLD$UNDERLINE'Cleaning up Homebrew...\n'$END
+    echo $GREEN$BOLD$UNDERLINE'Cleaning up Homebrew...\n'$END
 
     echo $BOLD'\trunning '$PURPLE'brew autoremove\n'$END
     brew autoremove
@@ -182,11 +194,11 @@ fi
 if [[ $upgrade_packages = y ]]; then
     echo $LINE_SEPARATOR
 
-    echo $BOLD$UNDERLINE'Listing packages in need of upgrading...\n'$END
+    echo $GREEN$BOLD$UNDERLINE'Listing packages in need of upgrading...\n'$END
     echo $BOLD'\trunning '$PURPLE'brew outdated\n'$END
     brew outdated
 
-    echo $BOLD$UNDERLINE'Upgrading packages...\n'$END
+    echo $GREEN$BOLD$UNDERLINE'Upgrading packages...\n'$END
     echo $BOLD'\trunning '$PURPLE'brew upgrade\n'$END
     brew upgrade
 fi
@@ -210,7 +222,7 @@ install_cask() {
 if [[ $install_casks = y ]]; then
     echo $LINE_SEPARATOR
 
-    echo $BOLD$UNDERLINE'Installing Homebrew casks...\n'$END
+    echo $GREEN$BOLD$UNDERLINE'Installing Homebrew casks...\n'$END
     for c in ${casks_to_install[@]}; do
 	cask=$c
 	install_cask
@@ -237,7 +249,7 @@ install_package() {
 if [[ $install_packages = y ]]; then
     echo $LINE_SEPARATOR
 
-    echo $BOLD$UNDERLINE'Installing Homebrew packages...\n'$END
+    echo $GREEN$BOLD$UNDERLINE'Installing Homebrew packages...\n'$END
     for p in ${packages_to_install[@]}; do
 	package=$p
 	install_package
@@ -250,9 +262,7 @@ fi
 ### Post-install messsage
 if [[ $install_casks = y || $install_packages = y ]]; then
     echo $LINE_SEPARATOR
-    echo $BOLD$UNDERLINE'Scroll up & read console output above, since there might be post-install steps.'$END
+    echo $GREEN$BOLD$UNDERLINE'Scroll up & read console output above, since there might be post-install steps.'$END
 fi
-
-echo $LINE_SEPARATOR
 
 exit 0
