@@ -233,7 +233,7 @@ if [[ $install_casks = y ]]; then
     if [[ -z "$installed_casks_not_in_install_list" ]]; then
 	echo $BOLD"All installed casks are in install list."$END
     else
-	echo $RED$BOLD"Some casks have been installed locally that are not reflected in install list. \nConsider adding to install list: "$END${installed_casks_not_in_install_list[@]}
+	echo $RED$BOLD"Some casks have been installed locally that are not reflected in install list. \nConsider adding to install list or uninstalling locally: "$END${installed_casks_not_in_install_list[@]}
     fi
 fi
 
@@ -277,7 +277,7 @@ if [[ $install_packages = y ]]; then
     if [[ -z "$installed_packages_not_in_install_list" ]]; then
 	echo $BOLD"All installed packages are in install list."$END
     else
-	echo $RED$BOLD"Some packages have been installed locally that are not reflected in install list. \nConsider adding to install list: "$END${installed_packages_not_in_install_list[@]}
+	echo $RED$BOLD"Some packages have been installed locally that are not reflected in install list. \nConsider adding to install list or uninstalling locally: "$END${installed_packages_not_in_install_list[@]}
     fi
 fi
 
