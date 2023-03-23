@@ -7,7 +7,7 @@
 ################################################################################
 #
 # Run this script:
-# `./brew_installs.sh`
+# `./brew-installs.sh`
 #
 #
 ################################################################################
@@ -110,6 +110,12 @@ BOLD="\033[1m"
 UNDERLINE="\033[4m"
 END="\033[0m"
 
+### Check that Homebrew is installed
+if ! command -v brew &> /dev/null; then
+    echo $RED"Homebrew is not installed, see https://brew.sh/"$END
+    exit 1
+fi
+
 ### Prompt user for actions to take
 echo -n $BOLD
 if read -rqs "update_homebrew?Update Homebrew? [y/N]: "; then
@@ -145,7 +151,7 @@ fi
 if [[ $update_homebrew != y && $cleanup_homebrew != y && $upgrade_packages != y && $install_casks != y && $install_packages != y ]]
 then
     echo '\n✨ Did nothing ✨'
-    exit 1
+    exit 0
 fi
 
 LINE_SEPARATOR='\n================================================================================\n'
@@ -248,3 +254,5 @@ if [[ $install_casks = y || $install_packages = y ]]; then
 fi
 
 echo $LINE_SEPARATOR
+
+exit 0
