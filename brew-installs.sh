@@ -74,6 +74,7 @@ packages_to_install=(
     'ffmpeg'
     'gh'
     'git'
+    'gnupg'
     'go'
     'grep'
     'htop'
