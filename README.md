@@ -4,8 +4,8 @@ Scripts related to setting up & maintaining an OSX environment with desired apps
 
 ## Files
 
-* `brew_installs.sh`: Script to install casks & packages from brew. Designed to be run many times through lifetime of dev environment as things are added/removed.
-* `first_time.sh`: Script intended for initialization after packages have been installed (i.e. `./brew_installs.sh` has been run once) for the first time. Designed to only be run once.
+* `brew_installs.sh`: Script to install casks & packages from [Homebrew](https://brew.sh/). Designed to be run many times through lifetime of dev environment as things are added or removed.
+* `first_time.sh`: Script intended for initialization after `./brew_installs.sh` has been run once. Designed to only be run once.
 
 ## Instructions
 
