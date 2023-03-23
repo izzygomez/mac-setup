@@ -218,7 +218,24 @@ if [[ $install_casks = y ]]; then
     done
 
     echo $BOLD'Already installed casks: '$END${casks_already_installed[*]}'\n'
-    echo $BOLD'Newly installed casks: '$END${casks_installed[*]}
+    if [[ $#casks_installed = 0 ]]; then
+	echo $BOLD'No new casks installed.\n'
+    else
+	echo $BOLD'Newly installed casks: '$END${casks_installed[*]}'\n'
+    fi
+
+    brew_list_cask=( $(brew list --cask) )
+    installed_casks_not_in_install_list=()
+    for c in ${brew_list_cask[@]}; do
+	if [[ ! "${casks_to_install[@]}" =~ "$c" ]]; then
+	    installed_casks_not_in_install_list+=( $c )
+	fi
+    done
+    if [[ -z "$installed_casks_not_in_install_list" ]]; then
+	echo $BOLD"All installed casks are in install list."$END
+    else
+	echo $RED$BOLD"Some casks have been installed locally that are not reflected in install list. \nConsider adding to install list: "$END${installed_casks_not_in_install_list[@]}
+    fi
 fi
 
 ### Install packages
@@ -245,7 +262,24 @@ if [[ $install_packages = y ]]; then
     done
 
     echo $BOLD'Already installed packages: '$END${packages_already_installed[*]}'\n'
-    echo $BOLD'Newly installed packages: '$END${packages_installed[*]}
+    if [[ $#packages_installed = 0 ]]; then
+	echo $BOLD'No new packages installed.\n'
+    else
+	echo $BOLD'Newly installed packages: '$END${packages_installed[*]}'\n'
+    fi
+
+    brew_leaves=( $(brew leaves --installed-on-request) )
+    installed_packages_not_in_install_list=()
+    for p in ${brew_leaves[@]}; do
+	if [[ ! "${packages_to_install[@]}" =~ "$p" ]]; then
+	    installed_packages_not_in_install_list+=( $p )
+	fi
+    done
+    if [[ -z "$installed_packages_not_in_install_list" ]]; then
+	echo $BOLD"All installed packages are in install list."$END
+    else
+	echo $RED$BOLD"Some packages have been installed locally that are not reflected in install list. \nConsider adding to install list: "$END${installed_packages_not_in_install_list[@]}
+    fi
 fi
 
 ### Cleanup Homebrew (see https://docs.brew.sh/Manpage)
