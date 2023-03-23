@@ -9,15 +9,12 @@
 # Run this script:
 # `./brew_installs.sh`
 #
-# Upgrade existing packages (already run by this script):
-# `brew upgrade`
-#
-# Upgrade existing casks:
-# `brew upgrade --cask`
 #
 ################################################################################
 # Other useful commands
 ################################################################################
+#
+# See https://docs.brew.sh/Manpage for full documentation on Homebrew commands.
 #
 # To enumerate list of packages (with descriptions) that have been installed,
 # run the following command (https://apple.stackexchange.com/a/154750):
@@ -121,6 +118,12 @@ else
     echo $END$RED$update_homebrew$END
 fi
 echo -n $BOLD
+if read -rqs "cleanup_homebrew?Cleanup Homebrew? [y/N]: "; then
+    echo $END$GREEN$cleanup_homebrew$END
+else
+    echo $END$RED$cleanup_homebrew$END
+fi
+echo -n $BOLD
 if read -qs "upgrade_packages?Upgrade packages? [y/N]: "; then
     echo $END$GREEN$upgrade_packages$END
 else
@@ -139,7 +142,7 @@ else
     echo $END$RED$install_packages$END
 fi
 
-if [[ $update_homebrew != y && $upgrade_packages != y && $install_casks != y && $install_packages != y ]]
+if [[ $update_homebrew != y && $cleanup_homebrew != y && $upgrade_packages != y && $install_casks != y && $install_packages != y ]]
 then
     echo '\n✨ Did nothing ✨'
     exit 1
@@ -154,6 +157,19 @@ if [[ $update_homebrew = y ]]; then
     echo $BOLD$UNDERLINE'Updating Homebrew...\n'$END
     echo $BOLD'\trunning '$PURPLE'brew update\n'$END
     brew update
+fi
+
+### Cleanup Homebrew (see https://docs.brew.sh/Manpage)
+if [[ $cleanup_homebrew = y ]]; then
+    echo $LINE_SEPARATOR
+
+    echo $BOLD$UNDERLINE'Cleaning up Homebrew...\n'$END
+
+    echo $BOLD'\trunning '$PURPLE'brew autoremove\n'$END
+    brew autoremove
+
+    echo $BOLD'\n\trunning '$PURPLE'brew cleanup --prune=all -s\n'$END
+    brew cleanup --prune=all -s
 fi
 
 ### Upgrade packages
