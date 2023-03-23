@@ -142,7 +142,7 @@ else
     echo $END$RED$cleanup_homebrew$END
 fi
 echo -n $BOLD'\t'
-if read -qs "upgrade_packages?Upgrade packages? [y/N]: "; then
+if read -qs "upgrade_packages?Upgrade casks & packages? [y/N]: "; then
     echo $END$GREEN$upgrade_packages$END
 else
     echo $END$RED$upgrade_packages$END
