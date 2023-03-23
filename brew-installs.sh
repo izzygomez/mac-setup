@@ -83,6 +83,7 @@ packages_to_install=(
     'imagemagick'
     'libusb'
     'mosh'
+    'node'
     'nvm'
     'poetry'
     'pre-commit'
