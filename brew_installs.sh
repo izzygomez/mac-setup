@@ -1,5 +1,7 @@
 #!/bin/zsh
 
+# ZSH scripting manual: https://zsh.sourceforge.io/Doc/Release/
+
 ################################################################################
 # Usage Instructions
 ################################################################################
@@ -35,19 +37,6 @@
 # https://apple.stackexchange.com/a/339096)
 #
 ################################################################################
-
-# TODO consider adding colors to my `echo` commands
-
-echo 'First, updating & upgrading Homebrew...\n'
-# updates brew
-echo 'running: brew update\n'
-brew update
-# list packages in need of upgrading
-echo 'running: brew outdated\n'
-brew outdated
-# upgrade packages
-echo 'running: brew upgrade\n'
-brew upgrade
 
 # For a full list, see https://formulae.brew.sh/cask/
 casks_to_install=(
@@ -113,27 +102,98 @@ packages_to_install=(
     'zsh-syntax-highlighting'
 )
 
+PURPLE="\033[95m"
+CYAN="\033[96m"
+DARKCYAN="\033[36m"
+BLUE="\033[94m"
+GREEN="\033[92m"
+YELLOW="\033[93m"
+RED="\033[91m"
+BOLD="\033[1m"
+UNDERLINE="\033[4m"
+END="\033[0m"
+
+### Prompt user for actions to take
+echo -n $BOLD
+if read -rqs "update_homebrew?Update Homebrew? [y/N]: "; then
+    echo $END$GREEN$update_homebrew$END
+else
+    echo $END$RED$update_homebrew$END
+fi
+echo -n $BOLD
+if read -qs "upgrade_packages?Upgrade packages? [y/N]: "; then
+    echo $END$GREEN$upgrade_packages$END
+else
+    echo $END$RED$upgrade_packages$END
+fi
+echo -n $BOLD
+if read -qs "install_casks?Install casks? [y/N]: "; then
+    echo $END$GREEN$install_casks$END
+else
+    echo $END$RED$install_casks$END
+fi
+echo -n $BOLD
+if read -qs "install_packages?Install packages? [y/N]: "; then
+    echo $END$GREEN$install_packages$END
+else
+    echo $END$RED$install_packages$END
+fi
+
+if [[ $update_homebrew != y && $upgrade_packages != y && $install_casks != y && $install_packages != y ]]
+then
+    echo '\n✨ Did nothing ✨'
+    exit 1
+fi
+
+LINE_SEPARATOR='\n================================================================================\n'
+
+### Update Homebrew
+if [[ $update_homebrew = y ]]; then
+    echo $LINE_SEPARATOR
+    echo $BOLD$UNDERLINE'Updating Homebrew...\n'$END
+    echo $BOLD'\trunning '$PURPLE'brew update\n'$END
+    brew update
+fi
+
+### Upgrade packages
+if [[ $upgrade_packages = y ]]; then
+    echo $LINE_SEPARATOR
+    echo $BOLD$UNDERLINE'Listing packages in need of upgrading...\n'$END
+    echo $BOLD'\trunning '$PURPLE'brew outdated\n'$END
+    brew outdated
+    echo $BOLD$UNDERLINE'Upgrading packages...\n'$END
+    echo $BOLD'\trunning '$PURPLE'brew upgrade\n'$END
+    brew upgrade
+fi
+
+### Install casks
 # TODO document these sections some more, e.g. still need to figure out how
 # to download python/ruby/etc & install correctly/not-manually
-echo '================================================================================'
-echo '================================================================================'
-echo 'Installing Homebrew casks...\n'
-for cask in ${casks_to_install[@]}; do
-    echo 'running: brew install --cask' $cask '\n'
-    brew install --cask $cask
-    echo '\ndone!\n'
-done
+if [[ $install_casks = y ]]; then
+    echo $LINE_SEPARATOR
+    echo $BOLD$UNDERLINE'Installing Homebrew casks...\n'$END
+    for cask in ${casks_to_install[@]}; do
+	echo $BOLD'\trunning '$PURPLE'brew install --cask '$cask'\n'$END
+	brew install --cask $cask
+	echo -n '\n'
+    done
+fi
 
-echo '================================================================================'
-echo '================================================================================'
-echo 'Installing Homebrew packages...\n'
-for package in ${packages_to_install[@]}; do
-    echo 'running: brew install' $package '\n'
-    brew install $package
-    echo '\ndone!\n'
-done
+### Install packages
+if [[ $install_packages = y ]]; then
+    echo $LINE_SEPARATOR
+    echo $BOLD$UNDERLINE'Installing Homebrew packages...\n'$END
+    for package in ${packages_to_install[@]}; do
+	echo $BOLD'\trunning '$PURPLE'brew install '$package'\n'$END
+	brew install $package
+	echo -n '\n'
+    done
+fi
 
-echo '================================================================================'
-echo '================================================================================'
+### Post-install messsage
+if [[ $install_casks = y || $install_packages = y ]]; then
+    echo $LINE_SEPARATOR
+    echo $BOLD'Scroll up & read console output above, since there might be post-install steps.'$END
+fi
 
-echo 'Scroll up & read output above, as there might be post-install steps'
+echo $LINE_SEPARATOR
