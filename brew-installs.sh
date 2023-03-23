@@ -1,7 +1,5 @@
 #!/bin/zsh
 
-# ZSH scripting manual: https://zsh.sourceforge.io/Doc/Release/
-
 ################################################################################
 # Usage Instructions
 ################################################################################
@@ -9,16 +7,16 @@
 # Run this script:
 # `./brew-installs.sh`
 #
-#
 ################################################################################
 # Other useful commands
 ################################################################################
 #
 # See https://docs.brew.sh/Manpage for full documentation on Homebrew commands.
 #
+# See https://zsh.sourceforge.io/Doc/Release for a ZSH scripting manual.
+#
 # To enumerate list of packages (with descriptions) that have been installed,
 # run the following command (https://apple.stackexchange.com/a/154750):
-#
 # `brew leaves --installed-on-request | xargs -n1 brew desc --eval-all`
 #
 # List all brew formula:
