@@ -56,7 +56,6 @@ casks_to_install=(
     'rectangle'
     'rescuetime'
     'rocket'
-    'slack'
     'spotify'
     'steam'
     'telegram'
