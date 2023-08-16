@@ -80,6 +80,7 @@ packages_to_install=(
     'grep'
     'htop'
     'imagemagick'
+    'ipfs'
     'libusb'
     'mosh'
     'node'
