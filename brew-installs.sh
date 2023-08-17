@@ -96,6 +96,7 @@ packages_to_install=(
     'tree'
     'wget'
     'yarn'
+    'youtube-dl'
     'zsh-autosuggestions'
     'zsh-syntax-highlighting'
 )
