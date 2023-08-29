@@ -53,6 +53,7 @@ casks_to_install=(
     'kyokan-bob'
     'lastpass'
     'musescore'
+    'raspberry-pi-imager'
     'rectangle'
     'rescuetime'
     'rocket'
