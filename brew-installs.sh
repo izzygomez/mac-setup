@@ -139,24 +139,42 @@ else
     echo $END$RED$update_homebrew$END
 fi
 echo -n $BOLD'\t'
+
 if read -qs "upgrade_packages?Upgrade casks & packages? [y/N]: "; then
     echo $END$GREEN$upgrade_packages$END
 else
     echo $END$RED$upgrade_packages$END
 fi
 echo -n $BOLD'\t'
+
 if read -qs "install_casks?Install casks? [y/N]: "; then
     echo $END$GREEN$install_casks$END
 else
     echo $END$RED$install_casks$END
 fi
 echo -n $BOLD'\t'
+
+if read -qs "check_casks?Check installed casks? [y/N]: "; then
+    echo $END$GREEN$check_casks$END
+else
+    echo $END$RED$check_casks$END
+fi
+echo -n $BOLD'\t'
+
 if read -qs "install_packages?Install packages? [y/N]: "; then
     echo $END$GREEN$install_packages$END
 else
     echo $END$RED$install_packages$END
 fi
 echo -n $BOLD'\t'
+
+if read -qs "check_packages?Check installed packages? [y/N]: "; then
+    echo $END$GREEN$check_packages$END
+else
+    echo $END$RED$check_packages$END
+fi
+echo -n $BOLD'\t'
+
 if read -rqs "cleanup_homebrew?Cleanup Homebrew? [y/N]: "; then
     echo $END$GREEN$cleanup_homebrew$END
 else
@@ -164,7 +182,7 @@ else
 fi
 
 
-if [[ $update_homebrew != y && $upgrade_packages != y && $install_casks != y && $install_packages != y && $cleanup_homebrew != y ]]
+if [[ $update_homebrew != y && $upgrade_packages != y && $install_casks != y && $check_casks != y && $install_packages != y && $check_packages != y && $cleanup_homebrew != y ]]
 then
     echo '\n\t✨ Did nothing ✨'
     exit 0
@@ -225,6 +243,13 @@ if [[ $install_casks = y ]]; then
     else
 	echo $BOLD'Newly installed casks: '$END${casks_installed[*]}'\n'
     fi
+fi
+
+### Check casks
+if [[ $check_casks = y ]]; then
+    echo $LINE_SEPARATOR
+
+    echo $GREEN$BOLD$UNDERLINE'Checking Homebrew casks...\n'$END
 
     brew_list_cask=( $(brew list --cask) )
     installed_casks_not_in_install_list=()
@@ -269,6 +294,13 @@ if [[ $install_packages = y ]]; then
     else
 	echo $BOLD'Newly installed packages: '$END${packages_installed[*]}'\n'
     fi
+fi
+
+### Check packages
+if [[ $check_packages = y ]]; then
+    echo $LINE_SEPARATOR
+
+    echo $GREEN$BOLD$UNDERLINE'Checking Homebrew packages...\n'$END
 
     brew_leaves=( $(brew leaves --installed-on-request) )
     installed_packages_not_in_install_list=()
