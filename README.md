@@ -23,7 +23,9 @@ Afterwards, simply run:
     Update Homebrew? [y/N]
     Upgrade casks & packages? [y/N]
     Install casks? [y/N]
+    Check installed casks? [y/N]
     Install packages? [y/N]
+    Check installed packages? [y/N]
     Cleanup Homebrew? [y/N]
 ...
 ```
