@@ -67,6 +67,7 @@ casks_to_install=(
     'trezor-suite'
     'visual-studio-code'
     'vlc'
+    'vnc-viewer'
 )
 
 packages_to_install=(
