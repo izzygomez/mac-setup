@@ -33,40 +33,9 @@
 #
 ################################################################################
 
+# Import casks & packages
 source ./casks.sh
-
-packages_to_install=(
-    'chruby' # from https://jekyllrb.com/docs/installation/macos/
-    'emacs'
-    'ffmpeg'
-    'gh'
-    'git'
-    'git-lfs'
-    'gnupg'
-    'go'
-    'grep'
-    'htop'
-    'imagemagick'
-    'ipfs'
-    'libusb'
-    'mosh'
-    'node'
-    'nvm'
-    'poetry'
-    'pre-commit'
-    'pyenv'
-    'ruby-install' # from https://jekyllrb.com/docs/installation/macos/
-    'solidity'
-    'source-highlight'
-    'thefuck'
-    'tmux'
-    'tree'
-    'wget'
-    'yarn'
-    'youtube-dl'
-    'zsh-autosuggestions'
-    'zsh-syntax-highlighting'
-)
+source ./packages.sh
 
 PURPLE="\033[95m"
 CYAN="\033[96m"
