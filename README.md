@@ -5,6 +5,7 @@ Scripts related to setting up & maintaining a consistent macOS environment with 
 ## Files
 
 * `brew-installs.sh`: Script to install casks & packages from [Homebrew](https://brew.sh/). Designed to be run many times as things are added or removed. Also does optional updating & cleanup tasks.
+* `casks.sh` & `packages.sh`: lists of Homebrew casks & packages to install via `brew-installs.sh`. 
 * `first-time.sh`: Script intended for initialization after `./brew-installs.sh` has been run once. Designed to only be run once.
 
 ## Usage
