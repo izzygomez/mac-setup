@@ -19,6 +19,7 @@ packages_to_install=(
     'pre-commit'
     'pyenv'
     'ruby-install' # from https://jekyllrb.com/docs/installation/macos/
+    'shfmt'
     'solidity'
     'source-highlight'
     'thefuck'
