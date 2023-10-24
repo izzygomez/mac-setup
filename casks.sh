@@ -6,7 +6,6 @@ casks_to_install=(
     'beardedspice' # https://beardedspice.github.io/
     'contexts'
     'discord'
-    'dropbox'
     'expressvpn'
     'firefox'
     'flux'
