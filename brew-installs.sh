@@ -154,7 +154,8 @@ cask=""
 casks_already_installed=()
 casks_installed=()
 install_cask() {
-    if brew list --cask $cask &> /dev/null; then
+    # Doing this because `brew list --cask` is too slow.
+    if [[ -d "$(brew --caskroom)/$cask" ]]; then
         casks_already_installed+=( $cask )
     else
 	echo $BOLD'\trunning '$PURPLE'brew install --cask '$cask'\n'$END
@@ -205,7 +206,8 @@ package=""
 packages_already_installed=()
 packages_installed=()
 install_package() {
-    if brew list $package &> /dev/null; then
+    # Doing this because `brew list` is too slow.
+    if [[ -d "$(brew --cellar)/$package" ]]; then
 	packages_already_installed+=( $package )
     else
 	echo $BOLD'\trunning '$PURPLE'brew install '$package'\n'$END
