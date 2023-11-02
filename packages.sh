@@ -14,7 +14,10 @@ packages_to_install=(
     'libusb'
     'mosh'
     'node'
-    'nvm'
+    # See https://github.com/nvm-sh/nvm for why Homebrew installation is not
+    # recommended. Keeping this line here for posterity & to make it clear that
+    # nvm should be installed via script in GitHub repo.
+    # 'nvm'
     'poetry'
     'pre-commit'
     'pyenv'
