@@ -4,7 +4,6 @@ packages_to_install=(
     'ffmpeg'
     'gh'
     'git'
-    'git-lfs'
     'gnupg'
     'go'
     'grep'
