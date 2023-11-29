@@ -3,7 +3,6 @@ casks_to_install=(
     'anki'
     'atom'
     'authy'
-    'beardedspice' # https://beardedspice.github.io/
     'contexts'
     'discord'
     'expressvpn'
