@@ -14,7 +14,6 @@ casks_to_install=(
     'iterm2'
     'kyokan-bob'
     'lastpass'
-    'little-snitch'
     'maccy'
     'musescore'
     'raspberry-pi-imager'
