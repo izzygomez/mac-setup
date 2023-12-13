@@ -3,6 +3,7 @@ casks_to_install=(
     'anki'
     'atom'
     'authy'
+    'bitwarden'
     'contexts'
     'discord'
     'expressvpn'
