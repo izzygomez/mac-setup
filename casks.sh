@@ -33,4 +33,5 @@ casks_to_install=(
     'visual-studio-code'
     'vlc'
     'vnc-viewer'
+    'zoom'
 )
