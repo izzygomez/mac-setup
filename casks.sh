@@ -16,6 +16,7 @@ casks_to_install=(
     'lastpass'
     'maccy'
     'monero-wallet'
+    'mullvadvpn'
     'musescore'
     'raspberry-pi-imager'
     'rectangle'
