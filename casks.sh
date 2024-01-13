@@ -6,7 +6,6 @@ casks_to_install=(
     'bitwarden'
     'contexts'
     'discord'
-    'expressvpn'
     'firefox'
     'flux'
     'freedom'
