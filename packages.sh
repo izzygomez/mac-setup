@@ -11,6 +11,7 @@ packages_to_install=(
     'imagemagick'
     'ipfs'
     'libusb'
+    'monero'
     'mosh'
     'node'
     # See https://github.com/nvm-sh/nvm for why Homebrew installation is not

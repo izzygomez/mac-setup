@@ -15,6 +15,7 @@ casks_to_install=(
     'kyokan-bob'
     'lastpass'
     'maccy'
+    'monero-wallet'
     'musescore'
     'raspberry-pi-imager'
     'rectangle'
