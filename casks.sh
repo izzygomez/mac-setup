@@ -1,7 +1,6 @@
 casks_to_install=(
     'alfred'
     'anki'
-    'authy'
     'bitwarden'
     'contexts'
     'discord'
