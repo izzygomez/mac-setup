@@ -11,7 +11,6 @@ casks_to_install=(
     'google-drive'
     'iterm2'
     'kyokan-bob'
-    'lastpass'
     'monero-wallet'
     'mullvadvpn'
     'musescore'
