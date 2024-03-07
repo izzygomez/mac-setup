@@ -10,7 +10,6 @@ casks_to_install=(
     'google-chrome'
     'google-drive'
     'iterm2'
-    'kyokan-bob'
     'monero-wallet'
     'mullvadvpn'
     'musescore'
