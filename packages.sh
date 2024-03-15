@@ -13,6 +13,7 @@ packages_to_install=(
     'libusb'
     'monero'
     'mosh'
+    'neofetch'  # finally found out the the thing all of r/unixporn uses
     'node'
     # See https://github.com/nvm-sh/nvm for why Homebrew installation is not
     # recommended. Keeping this line here for posterity & to make it clear that
