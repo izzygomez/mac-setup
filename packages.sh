@@ -24,6 +24,7 @@ packages_to_install=(
     'pyenv'
     'ruby-install' # from https://jekyllrb.com/docs/installation/macos/
     'shfmt'
+    'spek' # https://github.com/alexkay/spek, nice audio spectrum analyzer
     'solidity'
     'source-highlight'
     'thefuck'
