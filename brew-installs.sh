@@ -49,7 +49,7 @@ UNDERLINE="\033[4m"
 END="\033[0m"
 
 ### Check that Homebrew is installed
-if ! command -v brew &> /dev/null; then
+if ! command -v brew &>/dev/null; then
     echo $RED"Homebrew is not installed, see https://brew.sh/"$END
     exit 1
 fi
@@ -67,58 +67,44 @@ echo '
 echo -n $END
 
 ### Prompt user for actions to take
-echo -n $BOLD'\t'
-if read -rqs "update_homebrew?Update Homebrew? [y/N]: "; then
-    echo $END$GREEN$update_homebrew$END
-else
-    echo $END$RED$update_homebrew$END
-fi
-echo -n $BOLD'\t'
+echo 'This script will update Homebrew, upgrade existing casks'
+echo '& packages, install new casks & packages, check installed'
+echo 'casks & packages lists, & cleanup Homebrew.\n'
 
-if read -qs "upgrade_packages?Upgrade casks & packages? [y/N]: "; then
-    echo $END$GREEN$upgrade_packages$END
-else
-    echo $END$RED$upgrade_packages$END
-fi
-echo -n $BOLD'\t'
+# Helper function to read user input after displaying a prompt
+ask_for_confirmation() {
+    local prompt="$1"
+    local var_name="$2"
 
-if read -qs "install_casks?Install casks? [y/N]: "; then
-    echo $END$GREEN$install_casks$END
-else
-    echo $END$RED$install_casks$END
-fi
-echo -n $BOLD'\t'
+    echo -n $BOLD'\t'
+    if read -rqs "$var_name?$prompt [y/N]: "; then
+        echo $END${GREEN}y$END
+    else
+        echo $END${RED}n$END
+    fi
+}
 
-if read -qs "check_casks?Check installed casks? [y/N]: "; then
-    echo $END$GREEN$check_casks$END
+ask_for_confirmation "Do everything?" do_everything
+if [[ $do_everything != y ]]; then
+    ask_for_confirmation "Update Homebrew?" update_homebrew
+    ask_for_confirmation "Upgrade casks & packages?" upgrade_packages
+    ask_for_confirmation "Install casks?" install_casks
+    ask_for_confirmation "Check installed casks?" check_casks
+    ask_for_confirmation "Install packages?" install_packages
+    ask_for_confirmation "Check installed packages?" check_packages
+    ask_for_confirmation "Cleanup Homebrew?" cleanup_homebrew
 else
-    echo $END$RED$check_casks$END
-fi
-echo -n $BOLD'\t'
-
-if read -qs "install_packages?Install packages? [y/N]: "; then
-    echo $END$GREEN$install_packages$END
-else
-    echo $END$RED$install_packages$END
-fi
-echo -n $BOLD'\t'
-
-if read -qs "check_packages?Check installed packages? [y/N]: "; then
-    echo $END$GREEN$check_packages$END
-else
-    echo $END$RED$check_packages$END
-fi
-echo -n $BOLD'\t'
-
-if read -rqs "cleanup_homebrew?Cleanup Homebrew? [y/N]: "; then
-    echo $END$GREEN$cleanup_homebrew$END
-else
-    echo $END$RED$cleanup_homebrew$END
+    update_homebrew="y"
+    upgrade_packages="y"
+    install_casks="y"
+    check_casks="y"
+    install_packages="y"
+    check_packages="y"
+    cleanup_homebrew="y"
 fi
 
-
-if [[ $update_homebrew != y && $upgrade_packages != y && $install_casks != y && $check_casks != y && $install_packages != y && $check_packages != y && $cleanup_homebrew != y ]]
-then
+# Exit if no actions are to be taken
+if [[ $update_homebrew != y && $upgrade_packages != y && $install_casks != y && $check_casks != y && $install_packages != y && $check_packages != y && $cleanup_homebrew != y ]]; then
     echo '\n\t✨ Did nothing ✨'
     exit 0
 fi
@@ -156,12 +142,12 @@ casks_installed=()
 install_cask() {
     # Doing this because `brew list --cask` is too slow.
     if [[ -d "$(brew --caskroom)/$cask" ]]; then
-        casks_already_installed+=( $cask )
+        casks_already_installed+=($cask)
     else
-	echo $BOLD'\trunning '$PURPLE'brew install --cask '$cask'\n'$END
-	brew install --cask $cask
-	echo -n '\n'
-	casks_installed+=( $cask )
+        echo $BOLD'\trunning '$PURPLE'brew install --cask '$cask'\n'$END
+        brew install --cask $cask
+        echo -n '\n'
+        casks_installed+=($cask)
     fi
 }
 if [[ $install_casks = y ]]; then
@@ -169,15 +155,15 @@ if [[ $install_casks = y ]]; then
 
     echo $GREEN$BOLD$UNDERLINE'Installing Homebrew casks...\n'$END
     for c in ${casks_to_install[@]}; do
-	cask=$c
-	install_cask
+        cask=$c
+        install_cask
     done
 
     echo $BOLD'Already installed casks: '$END${casks_already_installed[*]}'\n'
     if [[ $#casks_installed = 0 ]]; then
-	echo $BOLD'No new casks installed.\n'
+        echo $BOLD'No new casks installed.\n'
     else
-	echo $BOLD'Newly installed casks: '$END${casks_installed[*]}'\n'
+        echo $BOLD'Newly installed casks: '$END${casks_installed[*]}'\n'
     fi
 fi
 
@@ -187,17 +173,17 @@ if [[ $check_casks = y ]]; then
 
     echo $GREEN$BOLD$UNDERLINE'Checking Homebrew casks...\n'$END
 
-    brew_list_cask=( $(brew list --cask) )
+    brew_list_cask=($(brew list --cask))
     installed_casks_not_in_install_list=()
     for c in ${brew_list_cask[@]}; do
-	if [[ ! "${casks_to_install[@]}" =~ "$c" ]]; then
-	    installed_casks_not_in_install_list+=( $c )
-	fi
+        if [[ ! "${casks_to_install[@]}" =~ "$c" ]]; then
+            installed_casks_not_in_install_list+=($c)
+        fi
     done
     if [[ -z "$installed_casks_not_in_install_list" ]]; then
-	echo $BOLD"All installed casks are in install list."$END
+        echo $BOLD"All installed casks are in install list."$END
     else
-	echo $RED$BOLD"Some casks have been installed locally that are not reflected in install list. \nConsider adding to install list or uninstalling locally (brew uninstall --cask \$cask): "$END${installed_casks_not_in_install_list[@]}
+        echo $RED$BOLD"Some casks have been installed locally that are not reflected in install list. \nConsider adding to install list or uninstalling locally (brew uninstall --cask \$cask): "$END${installed_casks_not_in_install_list[@]}
     fi
 fi
 
@@ -208,12 +194,12 @@ packages_installed=()
 install_package() {
     # Doing this because `brew list` is too slow.
     if [[ -d "$(brew --cellar)/$package" ]]; then
-	packages_already_installed+=( $package )
+        packages_already_installed+=($package)
     else
-	echo $BOLD'\trunning '$PURPLE'brew install '$package'\n'$END
-	brew install $package
-	echo -n '\n'
-	packages_installed+=( $package )
+        echo $BOLD'\trunning '$PURPLE'brew install '$package'\n'$END
+        brew install $package
+        echo -n '\n'
+        packages_installed+=($package)
     fi
 }
 if [[ $install_packages = y ]]; then
@@ -221,15 +207,15 @@ if [[ $install_packages = y ]]; then
 
     echo $GREEN$BOLD$UNDERLINE'Installing Homebrew packages...\n'$END
     for p in ${packages_to_install[@]}; do
-	package=$p
-	install_package
+        package=$p
+        install_package
     done
 
     echo $BOLD'Already installed packages: '$END${packages_already_installed[*]}'\n'
     if [[ $#packages_installed = 0 ]]; then
-	echo $BOLD'No new packages installed.\n'
+        echo $BOLD'No new packages installed.\n'
     else
-	echo $BOLD'Newly installed packages: '$END${packages_installed[*]}'\n'
+        echo $BOLD'Newly installed packages: '$END${packages_installed[*]}'\n'
     fi
 fi
 
@@ -239,17 +225,17 @@ if [[ $check_packages = y ]]; then
 
     echo $GREEN$BOLD$UNDERLINE'Checking Homebrew packages...\n'$END
 
-    brew_leaves=( $(brew leaves --installed-on-request) )
+    brew_leaves=($(brew leaves --installed-on-request))
     installed_packages_not_in_install_list=()
     for p in ${brew_leaves[@]}; do
-	if [[ ! "${packages_to_install[@]}" =~ "$p" ]]; then
-	    installed_packages_not_in_install_list+=( $p )
-	fi
+        if [[ ! "${packages_to_install[@]}" =~ "$p" ]]; then
+            installed_packages_not_in_install_list+=($p)
+        fi
     done
     if [[ -z "$installed_packages_not_in_install_list" ]]; then
-	echo $BOLD"All installed packages are in install list."$END
+        echo $BOLD"All installed packages are in install list."$END
     else
-	echo $RED$BOLD"Some packages have been installed locally that are not reflected in install list. \nConsider adding to install list or uninstalling locally (brew uninstall \$package): "$END${installed_packages_not_in_install_list[@]}
+        echo $RED$BOLD"Some packages have been installed locally that are not reflected in install list. \nConsider adding to install list or uninstalling locally (brew uninstall \$package): "$END${installed_packages_not_in_install_list[@]}
     fi
 fi
 
