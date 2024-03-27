@@ -25,11 +25,12 @@
 # List all brew casks:
 # `brew list --cask`
 #
-# To remove all formula installed by Homebrew, run the following command:
+# To remove all formula & casks installed by Homebrew, run the following
+# commands:
 # `brew remove --force $(brew list --formula)`
-# This could be useful for "resetting" a setup by removing packages &
-# re-installing them immediately after by running this script. (see
-# https://apple.stackexchange.com/a/339096)
+# `brew remove --cask --force $(brew list --cask)`
+# This could be useful for "resetting" a setup  & re-installing them immediately
+# after by running this script. (see https://apple.stackexchange.com/a/339096)
 #
 ################################################################################
 
@@ -87,7 +88,7 @@ ask_for_confirmation() {
 ask_for_confirmation "Do everything?" do_everything
 if [[ $do_everything != y ]]; then
     ask_for_confirmation "Update Homebrew?" update_homebrew
-    ask_for_confirmation "Upgrade casks & packages?" upgrade_packages
+    ask_for_confirmation "Upgrade casks & packages?" upgrade_everything
     ask_for_confirmation "Install casks?" install_casks
     ask_for_confirmation "Check installed casks?" check_casks
     ask_for_confirmation "Install packages?" install_packages
@@ -95,7 +96,7 @@ if [[ $do_everything != y ]]; then
     ask_for_confirmation "Cleanup Homebrew?" cleanup_homebrew
 else
     update_homebrew="y"
-    upgrade_packages="y"
+    upgrade_everything="y"
     install_casks="y"
     check_casks="y"
     install_packages="y"
@@ -104,7 +105,7 @@ else
 fi
 
 # Exit if no actions are to be taken
-if [[ $update_homebrew != y && $upgrade_packages != y && $install_casks != y && $check_casks != y && $install_packages != y && $check_packages != y && $cleanup_homebrew != y ]]; then
+if [[ $update_homebrew != y && $upgrade_everything != y && $install_casks != y && $check_casks != y && $install_packages != y && $check_packages != y && $cleanup_homebrew != y ]]; then
     echo '\n\t✨ Did nothing ✨'
     exit 0
 fi
@@ -120,8 +121,8 @@ if [[ $update_homebrew = y ]]; then
     brew update
 fi
 
-### Upgrade packages
-if [[ $upgrade_packages = y ]]; then
+### Upgrade everything
+if [[ $upgrade_everything = y ]]; then
     echo $LINE_SEPARATOR
 
     echo $GREEN$BOLD$UNDERLINE'Listing packages in need of upgrading...\n'$END
