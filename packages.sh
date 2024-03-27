@@ -32,7 +32,7 @@ packages_to_install=(
     'tree'
     'wget'
     'yarn'
-    'youtube-dl'
+    'yt-dlp'  # replaces now deprecated (per brew.sh) youtube-dl
     'zsh-autosuggestions'
     'zsh-syntax-highlighting'
 )
