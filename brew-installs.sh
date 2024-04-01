@@ -86,15 +86,7 @@ ask_for_confirmation() {
 }
 
 ask_for_confirmation "Do everything?" do_everything
-if [[ $do_everything != y ]]; then
-    ask_for_confirmation "Update Homebrew?" update_homebrew
-    ask_for_confirmation "Upgrade casks & packages?" upgrade_everything
-    ask_for_confirmation "Install casks?" install_casks
-    ask_for_confirmation "Check installed casks?" check_casks
-    ask_for_confirmation "Install packages?" install_packages
-    ask_for_confirmation "Check installed packages?" check_packages
-    ask_for_confirmation "Cleanup Homebrew?" cleanup_homebrew
-else
+if [[ $do_everything == y ]]; then
     update_homebrew="y"
     upgrade_everything="y"
     install_casks="y"
@@ -102,11 +94,19 @@ else
     install_packages="y"
     check_packages="y"
     cleanup_homebrew="y"
+else
+    ask_for_confirmation "Update Homebrew?" update_homebrew
+    ask_for_confirmation "Upgrade casks & packages?" upgrade_everything
+    ask_for_confirmation "Install casks?" install_casks
+    ask_for_confirmation "Check installed casks?" check_casks
+    ask_for_confirmation "Install packages?" install_packages
+    ask_for_confirmation "Check installed packages?" check_packages
+    ask_for_confirmation "Cleanup Homebrew?" cleanup_homebrew
 fi
 
 # Exit if no actions are to be taken
 if [[ $update_homebrew != y && $upgrade_everything != y && $install_casks != y && $check_casks != y && $install_packages != y && $check_packages != y && $cleanup_homebrew != y ]]; then
-    echo '\n\t✨ Did nothing ✨'
+    echo '\n✨ Did nothing ✨'
     exit 0
 fi
 
@@ -256,7 +256,7 @@ fi
 ### Post-install messsage
 if [[ $install_casks = y || $install_packages = y ]]; then
     echo $LINE_SEPARATOR
-    echo $GREEN$BOLD$UNDERLINE'Installed casks and/or packages:\n\n'$END$BOLD'Scroll up & read console output since there might be post-install steps.'$END
+    echo $GREEN$BOLD$UNDERLINE'Installed casks or packages:\n\n'$END$BOLD'Scroll up & read console output since there might be post-install steps printed to stdout.'$END
 fi
 
 exit 0

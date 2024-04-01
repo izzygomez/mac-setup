@@ -1,6 +1,6 @@
 # macOS Setup Scripts
 
-Scripts related to setting up & maintaining a consistent macOS environment with desired apps & packages.
+Scripts for setting up & maintaining a consistent macOS environment with desired apps & packages.
 
 ## Files
 
@@ -12,23 +12,12 @@ Scripts related to setting up & maintaining a consistent macOS environment with 
 
 When using for first time, run:
 ```shell
-> chmod +x ./brew-installs.sh
-> chmod +x ./first-time.sh
 > ./brew-installs.sh
 > ./first-time.sh
 ```
 Afterwards, simply run:
 ```shell
 > ./brew-installs.sh
-...
-    Update Homebrew? [y/N]
-    Upgrade casks & packages? [y/N]
-    Install casks? [y/N]
-    Check installed casks? [y/N]
-    Install packages? [y/N]
-    Check installed packages? [y/N]
-    Cleanup Homebrew? [y/N]
-...
 ```
 
 ## TODOs
