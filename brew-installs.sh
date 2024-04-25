@@ -19,15 +19,15 @@
 # run the following command (https://apple.stackexchange.com/a/154750):
 # `brew leaves --installed-on-request | xargs -n1 brew desc --eval-all`
 #
-# List all brew formula:
-# `brew list --formula`
+# List all brew formulae:
+# `brew list --formulae`
 #
 # List all brew casks:
 # `brew list --cask`
 #
-# To remove all formula & casks installed by Homebrew, run the following
+# To remove all formulae & casks installed by Homebrew, run the following
 # commands:
-# `brew remove --force $(brew list --formula)`
+# `brew remove --force $(brew list --formulae)`
 # `brew remove --cask --force $(brew list --cask)`
 # This could be useful for "resetting" a setup  & re-installing them immediately
 # after by running this script. (see https://apple.stackexchange.com/a/339096)
@@ -125,11 +125,11 @@ fi
 if [[ $upgrade_everything = y ]]; then
     echo $LINE_SEPARATOR
 
-    echo $GREEN$BOLD$UNDERLINE'Listing packages in need of upgrading...\n'$END
+    echo $GREEN$BOLD$UNDERLINE'Listing casks & packages in need of upgrading...\n'$END
     echo $BOLD'\trunning '$PURPLE'brew outdated\n'$END
     brew outdated
 
-    echo $GREEN$BOLD$UNDERLINE'\nUpgrading packages...\n'$END
+    echo $GREEN$BOLD$UNDERLINE'\nUpgrading outdated casks & packages...\n'$END
     echo $BOLD'\trunning '$PURPLE'brew upgrade\n'$END
     brew upgrade
 fi
