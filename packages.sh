@@ -11,6 +11,7 @@ packages_to_install=(
     'imagemagick'
     'ipfs'
     'libusb'
+    'md5sha1sum'
     'monero'
     'mosh'
     'neofetch'  # finally found out the the thing all of r/unixporn uses
