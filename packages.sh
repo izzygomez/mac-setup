@@ -34,6 +34,7 @@ packages_to_install=(
     'solidity'
     'source-highlight'
     'thefuck'
+    'tidy-html5'
     'tmux'
     'tree'
     'wget'
