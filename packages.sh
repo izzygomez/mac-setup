@@ -1,6 +1,7 @@
 packages_to_install=(
     'chruby' # from https://jekyllrb.com/docs/installation/macos/
     'emacs'
+    'fastfetch'  # finally found out the the thing all of r/unixporn uses (used to use `neofetch`)
     'ffmpeg'
     'gh'
     'git'
@@ -14,7 +15,6 @@ packages_to_install=(
     'md5sha1sum'
     'monero'
     'mosh'
-    'neofetch'  # finally found out the the thing all of r/unixporn uses
     'node'
     # Java.
     # Per [1], note that following command should be run after installation:
