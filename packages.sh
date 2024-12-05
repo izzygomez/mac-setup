@@ -33,7 +33,6 @@ packages_to_install=(
     'spek' # https://github.com/alexkay/spek, nice audio spectrum analyzer
     'solidity'
     'source-highlight'
-    'thefuck'
     'tidy-html5'
     'tmux'
     'tree'
