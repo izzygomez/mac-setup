@@ -29,6 +29,7 @@ packages_to_install=(
     'pre-commit'
     'pyenv'
     'ruby-install' # from https://jekyllrb.com/docs/installation/macos/
+    'rustup' # from https://www.rust-lang.org/tools/install
     'shfmt'
     'spek' # https://github.com/alexkay/spek, nice audio spectrum analyzer
     'solidity'
