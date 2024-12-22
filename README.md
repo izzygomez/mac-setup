@@ -10,6 +10,8 @@ Scripts for setting up & maintaining a consistent macOS environment with desired
 
 ## Usage
 
+This script assumes that [Homebrew](https://brew.sh/) is installed — install via curl command at website.
+
 When using for first time, run:
 ```shell
 > ./brew-installs.sh
