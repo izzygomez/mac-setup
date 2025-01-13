@@ -17,6 +17,7 @@ casks_to_install=(
     'raspberry-pi-imager'
     'rectangle'
     'rocket'
+    'samsung-magician'
     'sonos'
     'spotify'
     'stats'
