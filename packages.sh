@@ -27,6 +27,7 @@ packages_to_install=(
     # 'nvm'
     'poetry'
     'pre-commit'
+    'pure' # https://github.com/sindresorhus/pure
     'pyenv'
     'ruby-install' # from https://jekyllrb.com/docs/installation/macos/
     'rustup' # from https://www.rust-lang.org/tools/install
