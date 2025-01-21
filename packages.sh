@@ -11,6 +11,7 @@ packages_to_install=(
     'htop'
     'imagemagick'
     'ipfs'
+    'less'
     'libusb'
     'md5sha1sum'
     'monero'
