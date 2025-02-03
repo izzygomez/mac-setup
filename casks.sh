@@ -15,6 +15,7 @@ casks_to_install=(
     'monero-wallet'
     'mullvadvpn'
     'musescore'
+    'ngrok'
     'raspberry-pi-imager'
     'rectangle'
     'rocket'
