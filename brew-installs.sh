@@ -68,47 +68,34 @@ echo '
 echo -n $END
 
 ### Prompt user for actions to take
-echo 'This script will update Homebrew, upgrade existing casks'
+echo 'This script can update Homebrew, upgrade existing casks'
 echo '& packages, install new casks & packages, check installed'
 echo 'casks & packages lists, & cleanup Homebrew.\n'
 
-# Helper function to read user input after displaying a prompt
-ask_for_confirmation() {
-    local prompt="$1"
-    local var_name="$2"
+# Display menu options
+echo "Select an action to perform:"$BOLD
 
-    echo -n $BOLD'\t'
-    if read -rqs "$var_name?$prompt [y/N]: "; then
-        echo $END${GREEN}y$END
-    else
-        echo $END${RED}n$END
-    fi
-}
+echo "1) Do everything"
+echo "2) Update Homebrew"
+echo "3) Upgrade all casks & packages"
+echo "4) Install casks & packages"
+echo "5) Check installed casks & packages"
+echo "6) Cleanup Homebrew"
+echo "0) Exit"
+echo -n "\nEnter your choice: "$END
 
-ask_for_confirmation "Do everything?" do_everything
-if [[ $do_everything == y ]]; then
-    update_homebrew="y"
-    upgrade_everything="y"
-    install_casks="y"
-    check_casks="y"
-    install_packages="y"
-    check_packages="y"
-    cleanup_homebrew="y"
-else
-    ask_for_confirmation "Update Homebrew?" update_homebrew
-    ask_for_confirmation "Upgrade casks & packages?" upgrade_everything
-    ask_for_confirmation "Install casks?" install_casks
-    ask_for_confirmation "Check installed casks?" check_casks
-    ask_for_confirmation "Install packages?" install_packages
-    ask_for_confirmation "Check installed packages?" check_packages
-    ask_for_confirmation "Cleanup Homebrew?" cleanup_homebrew
-fi
+read choice
 
-# Exit if no actions are to be taken
-if [[ $update_homebrew != y && $upgrade_everything != y && $install_casks != y && $check_casks != y && $install_packages != y && $check_packages != y && $cleanup_homebrew != y ]]; then
-    echo '\n✨ Did nothing ✨'
-    exit 0
-fi
+case $choice in
+    1) update_homebrew=y; upgrade_everything=y; install_casks=y; check_casks=y; install_packages=y; check_packages=y; cleanup_homebrew=y;;
+    2) update_homebrew=y;;
+    3) upgrade_everything=y;;
+    4) install_casks=y; install_packages=y;;
+    5) check_casks=y; check_packages=y;;
+    6) cleanup_homebrew=y;;
+    0) echo "\n✨ Did nothing ✨"; exit 0;;
+    *) echo "Invalid choice. Exiting.\n✨ Did nothing ✨"; exit 1;;
+esac
 
 LINE_SEPARATOR=$BOLD'\n--------------------------------------------------------------------------------\n'$END
 
