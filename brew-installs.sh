@@ -73,7 +73,7 @@ echo '& packages, install new casks & packages, check installed'
 echo 'casks & packages lists, & cleanup Homebrew.\n'
 
 # Display menu options
-echo "Select an action to perform:"$BOLD
+echo "Select an action to perform (default = 0):"$BOLD
 
 echo "1) Do everything"
 echo "2) Update Homebrew"
@@ -84,17 +84,25 @@ echo "6) Cleanup Homebrew"
 echo "0) Exit"
 echo -n "\nEnter your choice: "$END
 
-read choice
+read -s -k 1 choice # -s: silent mode, -k 1: read only one character
+# If Enter is pressed, `choice` is a newline/empty string, so we default to "0"
+if [[ -z "$choice" || "$choice" == $'\n' ]]; then
+    choice="0"
+fi
+# Print the choice to stdout. Necessary bc of -s flag on read, but explicitly
+# don't want to echo back characters until after checking that it's not a
+# newline to keep consistent prompt formatting.
+echo $choice
 
 case $choice in
-    1) update_homebrew=y; upgrade_everything=y; install_casks=y; check_casks=y; install_packages=y; check_packages=y; cleanup_homebrew=y;;
+    1) echo "\nDoing everything..."; update_homebrew=y; upgrade_everything=y; install_casks=y; check_casks=y; install_packages=y; check_packages=y; cleanup_homebrew=y;;
     2) update_homebrew=y;;
     3) upgrade_everything=y;;
     4) install_casks=y; install_packages=y;;
     5) check_casks=y; check_packages=y;;
     6) cleanup_homebrew=y;;
     0) echo "\n✨ Did nothing ✨"; exit 0;;
-    *) echo "Invalid choice. Exiting.\n✨ Did nothing ✨"; exit 1;;
+    *) echo "\nInvalid choice. Exiting.\n✨ Did nothing ✨"; exit 1;;
 esac
 
 LINE_SEPARATOR=$BOLD'\n--------------------------------------------------------------------------------\n'$END
