@@ -73,7 +73,7 @@ echo '& packages, install new casks & packages, check installed'
 echo 'casks & packages lists, & cleanup Homebrew.\n'
 
 # Display menu options
-echo "Select an action to perform (default = 0):"$BOLD
+echo "Select an action to perform (default = 1):"$BOLD
 
 echo "1) Do everything"
 echo "2) Update Homebrew"
@@ -85,9 +85,9 @@ echo "0) Exit"
 echo -n "\nEnter your choice: "$END
 
 read -s -k 1 choice # -s: silent mode, -k 1: read only one character
-# If Enter is pressed, `choice` is a newline/empty string, so we default to "0"
+# If Enter is pressed, `choice` is a newline/empty string, so we default to "1"
 if [[ -z "$choice" || "$choice" == $'\n' ]]; then
-    choice="0"
+    choice="1"
 fi
 # Print the choice to stdout. Necessary bc of -s flag on read, but explicitly
 # don't want to echo back characters until after checking that it's not a
