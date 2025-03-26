@@ -34,5 +34,6 @@ casks_to_install=(
     'visual-studio-code'
     'vlc'
     'vnc-viewer'
+    'yubico-yubikey-manager'
     'zoom'
 )
