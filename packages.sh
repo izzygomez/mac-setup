@@ -11,6 +11,7 @@ packages_to_install=(
     'htop'
     'imagemagick'
     'ipfs'
+    'ipython'
     'less'
     'libusb'
     'md5sha1sum'
