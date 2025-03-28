@@ -5,6 +5,7 @@ casks_to_install=(
     'breaktimer'
     'chatgpt'
     'contexts'
+    'cursor'
     'discord'
     'firefox'
     'flux'
