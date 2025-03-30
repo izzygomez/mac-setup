@@ -2,7 +2,6 @@ casks_to_install=(
     'alfred'
     'anki'
     'bitwarden'
-    'breaktimer'
     'chatgpt'
     'contexts'
     'cursor'
