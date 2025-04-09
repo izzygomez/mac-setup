@@ -41,6 +41,7 @@ packages_to_install=(
     'tmux'
     'tree'
     'wget'
+    'withgraphite/tap/graphite' # https://graphite.dev/
     'yarn'
     'yt-dlp'  # replaces now deprecated (per brew.sh) youtube-dl
     'zsh-autosuggestions'

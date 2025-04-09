@@ -188,8 +188,7 @@ package=""
 packages_already_installed=()
 packages_installed=()
 install_package() {
-    # Doing this because `brew list` is too slow.
-    if [[ -d "$(brew --cellar)/$package" ]]; then
+    if brew list --formula | grep -q "^${package##*/}$"; then
         packages_already_installed+=($package)
     else
         echo $BOLD'\trunning '$PURPLE'brew install '$package'\n'$END
