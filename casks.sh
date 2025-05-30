@@ -13,7 +13,7 @@ casks_to_install=(
     'iterm2'
     'keybase'
     'monero-wallet'
-    'mullvadvpn'
+    'mullvad-vpn'
     'musescore'
     'ngrok'
     'notion'
