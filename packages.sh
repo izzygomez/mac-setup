@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 packages_to_install=(
     'chruby' # from https://jekyllrb.com/docs/installation/macos/
     'emacs'
@@ -47,3 +49,30 @@ packages_to_install=(
     'zsh-autosuggestions'
     'zsh-syntax-highlighting'
 )
+
+# Source local-specific packages if the file exists
+if [ -f "$(dirname "$0")/local/local-packages.sh" ]; then
+    echo "📦 Loading local packages..."
+    source "$(dirname "$0")/local/local-packages.sh"
+    # Add local packages to the main array
+    if [ -n "${local_packages_to_install[*]}" ]; then
+        echo "➕ Adding local packages: ${local_packages_to_install[*]}"
+        packages_to_install+=("${local_packages_to_install[@]}")
+    fi
+fi
+
+# Source and process local-specific package exclusions if the file exists
+if [ -f "$(dirname "$0")/local/local-exclude-packages.sh" ]; then
+    echo "🚫 Loading package exclusions..."
+    source "$(dirname "$0")/local/local-exclude-packages.sh"
+
+    # Filter out excluded packages using array operations
+    if [ -n "${local_exclude_packages[*]}" ]; then
+        echo "➖ Excluding packages: ${local_exclude_packages[*]}"
+        for exclude_package in "${local_exclude_packages[@]}"; do
+            packages_to_install=("${packages_to_install[@]/$exclude_package/}")
+        done
+        # Remove empty elements from the array
+        packages_to_install=("${packages_to_install[@]/#/}")
+    fi
+fi

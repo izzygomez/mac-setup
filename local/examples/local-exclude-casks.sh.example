@@ -1,0 +1,11 @@
+# Copy this file to local-exclude-casks.sh and list casks to exclude locally
+# This file will be ignored by git for privacy
+
+local_exclude_casks=(
+    # Add casks that should NOT be installed on work machine
+    # (e.g., apps managed by company admin software)
+    # Example:
+    # 'slack'
+    # 'zoom'
+    # 'google-chrome'
+)

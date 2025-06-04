@@ -1,0 +1,3 @@
+# Local configuration files
+local/*.sh
+!local/*.sh.example

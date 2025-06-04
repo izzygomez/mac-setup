@@ -1,0 +1,10 @@
+# Copy this file to local-exclude-packages.sh and list packages to exclude locally
+# This file will be ignored by git for privacy
+
+local_exclude_packages=(
+    # Add packages that should NOT be installed on work machine
+    # (e.g., packages managed by company admin software)
+    # Example:
+    # 'git'
+    # 'node'
+)

@@ -1,0 +1,10 @@
+# Copy this file to local-casks.sh and add your local-specific casks
+# This file will be ignored by git for privacy
+
+local_casks_to_install=(
+    # Add your local-specific casks here
+    # Example:
+    # 'microsoft-teams'
+    # 'slack'
+    # 'zoom'
+)

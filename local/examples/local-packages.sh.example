@@ -1,0 +1,10 @@
+# Copy this file to local-packages.sh and add your local-specific packages
+# This file will be ignored by git for privacy
+
+local_packages_to_install=(
+    # Add your local-specific packages here
+    # Example:
+    # 'kubectl'
+    # 'terraform'
+    # 'aws-cli'
+)

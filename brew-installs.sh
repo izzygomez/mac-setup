@@ -34,10 +34,6 @@
 #
 ################################################################################
 
-# Import casks & packages
-source ./casks.sh
-source ./packages.sh
-
 PURPLE="\033[95m"
 CYAN="\033[96m"
 DARKCYAN="\033[36m"
@@ -127,6 +123,12 @@ case $choice in
 esac
 
 LINE_SEPARATOR=$BOLD'\n--------------------------------------------------------------------------------\n'$END
+
+# Import casks & packages
+echo $LINE_SEPARATOR
+echo $GREEN$BOLD$UNDERLINE"Importing casks & packages...\n"$END
+source ./casks.sh
+source ./packages.sh
 
 ### Update Homebrew
 if [[ $update_homebrew == y ]]; then
