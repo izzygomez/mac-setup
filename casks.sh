@@ -42,7 +42,7 @@ casks_to_install=(
 
 # Source local-specific casks if the file exists
 if [ -f "$(dirname "$0")/local/local-casks.sh" ]; then
-    echo "📦 Loading local casks..."
+    echo "\n📦 Loading local casks..."
     source "$(dirname "$0")/local/local-casks.sh"
     # Add local casks to the main array
     if [ -n "${local_casks_to_install[*]}" ]; then
@@ -53,7 +53,7 @@ fi
 
 # Source and process local-specific cask exclusions if the file exists
 if [ -f "$(dirname "$0")/local/local-exclude-casks.sh" ]; then
-    echo "🚫 Loading cask exclusions..."
+    echo "\n🚫 Loading cask exclusions..."
     source "$(dirname "$0")/local/local-exclude-casks.sh"
 
     # Filter out excluded casks using array operations

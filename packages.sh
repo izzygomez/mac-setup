@@ -52,7 +52,7 @@ packages_to_install=(
 
 # Source local-specific packages if the file exists
 if [ -f "$(dirname "$0")/local/local-packages.sh" ]; then
-    echo "📦 Loading local packages..."
+    echo "\n📦 Loading local packages..."
     source "$(dirname "$0")/local/local-packages.sh"
     # Add local packages to the main array
     if [ -n "${local_packages_to_install[*]}" ]; then
@@ -63,7 +63,7 @@ fi
 
 # Source and process local-specific package exclusions if the file exists
 if [ -f "$(dirname "$0")/local/local-exclude-packages.sh" ]; then
-    echo "🚫 Loading package exclusions..."
+    echo "\n🚫 Loading package exclusions..."
     source "$(dirname "$0")/local/local-exclude-packages.sh"
 
     # Filter out excluded packages using array operations
