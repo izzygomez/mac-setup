@@ -86,7 +86,7 @@ echo -n "\nEnter your choice: "$END
 
 read -s -k 1 choice # -s: silent mode, -k 1: read only one character
 # If Enter is pressed, `choice` is a newline/empty string, so we default to "1"
-if [[ -z "$choice" || "$choice" == $'\n' ]]; then
+if [[ -z $choice || $choice == $'\n' ]]; then
     choice="1"
 fi
 # Print the choice to stdout. Necessary bc of -s flag on read, but explicitly
@@ -95,20 +95,41 @@ fi
 echo $choice
 
 case $choice in
-    1) echo "\nDoing everything..."; update_homebrew=y; upgrade_everything=y; install_casks=y; check_casks=y; install_packages=y; check_packages=y; cleanup_homebrew=y;;
-    2) update_homebrew=y;;
-    3) upgrade_everything=y;;
-    4) install_casks=y; install_packages=y;;
-    5) check_casks=y; check_packages=y;;
-    6) cleanup_homebrew=y;;
-    0) echo "\n✨ Did nothing ✨"; exit 0;;
-    *) echo "\nInvalid choice. Exiting.\n✨ Did nothing ✨"; exit 1;;
+1)
+    echo "\nDoing everything..."
+    update_homebrew=y
+    upgrade_everything=y
+    install_casks=y
+    check_casks=y
+    install_packages=y
+    check_packages=y
+    cleanup_homebrew=y
+    ;;
+2) update_homebrew=y ;;
+3) upgrade_everything=y ;;
+4)
+    install_casks=y
+    install_packages=y
+    ;;
+5)
+    check_casks=y
+    check_packages=y
+    ;;
+6) cleanup_homebrew=y ;;
+0)
+    echo "\n✨ Did nothing ✨"
+    exit 0
+    ;;
+*)
+    echo "\nInvalid choice. Exiting.\n✨ Did nothing ✨"
+    exit 1
+    ;;
 esac
 
 LINE_SEPARATOR=$BOLD'\n--------------------------------------------------------------------------------\n'$END
 
 ### Update Homebrew
-if [[ $update_homebrew = y ]]; then
+if [[ $update_homebrew == y ]]; then
     echo $LINE_SEPARATOR
 
     echo $GREEN$BOLD$UNDERLINE'Updating Homebrew...\n'$END
@@ -117,7 +138,7 @@ if [[ $update_homebrew = y ]]; then
 fi
 
 ### Upgrade everything
-if [[ $upgrade_everything = y ]]; then
+if [[ $upgrade_everything == y ]]; then
     echo $LINE_SEPARATOR
 
     echo $GREEN$BOLD$UNDERLINE'Listing casks & packages in need of upgrading...\n'$END
@@ -146,7 +167,7 @@ install_cask() {
         casks_installed+=($cask)
     fi
 }
-if [[ $install_casks = y ]]; then
+if [[ $install_casks == y ]]; then
     echo $LINE_SEPARATOR
 
     echo $GREEN$BOLD$UNDERLINE'Installing Homebrew casks...\n'$END
@@ -156,7 +177,7 @@ if [[ $install_casks = y ]]; then
     done
 
     echo $BOLD'Already installed casks: '$END${casks_already_installed[*]}'\n'
-    if [[ $#casks_installed = 0 ]]; then
+    if [[ $#casks_installed == 0 ]]; then
         echo $BOLD'No new casks installed.\n'
     else
         echo $BOLD'Newly installed casks: '$END${casks_installed[*]}'\n'
@@ -164,7 +185,7 @@ if [[ $install_casks = y ]]; then
 fi
 
 ### Check casks
-if [[ $check_casks = y ]]; then
+if [[ $check_casks == y ]]; then
     echo $LINE_SEPARATOR
 
     echo $GREEN$BOLD$UNDERLINE'Checking Homebrew casks...\n'$END
@@ -172,11 +193,11 @@ if [[ $check_casks = y ]]; then
     brew_list_cask=($(brew list --cask))
     installed_casks_not_in_install_list=()
     for c in ${brew_list_cask[@]}; do
-        if [[ ! "${casks_to_install[@]}" =~ "$c" ]]; then
+        if [[ ! ${casks_to_install[@]} =~ $c ]]; then
             installed_casks_not_in_install_list+=($c)
         fi
     done
-    if [[ -z "$installed_casks_not_in_install_list" ]]; then
+    if [[ -z $installed_casks_not_in_install_list ]]; then
         echo $BOLD"All installed casks are in install list."$END
     else
         echo $RED$BOLD"Some casks have been installed locally that are not reflected in install list. \nConsider adding to install list or uninstalling locally (brew uninstall --cask \$cask): "$END${installed_casks_not_in_install_list[@]}
@@ -197,7 +218,7 @@ install_package() {
         packages_installed+=($package)
     fi
 }
-if [[ $install_packages = y ]]; then
+if [[ $install_packages == y ]]; then
     echo $LINE_SEPARATOR
 
     echo $GREEN$BOLD$UNDERLINE'Installing Homebrew packages...\n'$END
@@ -207,7 +228,7 @@ if [[ $install_packages = y ]]; then
     done
 
     echo $BOLD'Already installed packages: '$END${packages_already_installed[*]}'\n'
-    if [[ $#packages_installed = 0 ]]; then
+    if [[ $#packages_installed == 0 ]]; then
         echo $BOLD'No new packages installed.\n'
     else
         echo $BOLD'Newly installed packages: '$END${packages_installed[*]}'\n'
@@ -215,7 +236,7 @@ if [[ $install_packages = y ]]; then
 fi
 
 ### Check packages
-if [[ $check_packages = y ]]; then
+if [[ $check_packages == y ]]; then
     echo $LINE_SEPARATOR
 
     echo $GREEN$BOLD$UNDERLINE'Checking Homebrew packages...\n'$END
@@ -223,11 +244,11 @@ if [[ $check_packages = y ]]; then
     brew_leaves=($(brew leaves --installed-on-request))
     installed_packages_not_in_install_list=()
     for p in ${brew_leaves[@]}; do
-        if [[ ! "${packages_to_install[@]}" =~ "$p" ]]; then
+        if [[ ! ${packages_to_install[@]} =~ $p ]]; then
             installed_packages_not_in_install_list+=($p)
         fi
     done
-    if [[ -z "$installed_packages_not_in_install_list" ]]; then
+    if [[ -z $installed_packages_not_in_install_list ]]; then
         echo $BOLD"All installed packages are in install list."$END
     else
         echo $RED$BOLD"Some packages have been installed locally that are not reflected in install list. \nConsider adding to install list or uninstalling locally (brew uninstall \$package): "$END${installed_packages_not_in_install_list[@]}
@@ -235,7 +256,7 @@ if [[ $check_packages = y ]]; then
 fi
 
 ### Cleanup Homebrew (see https://docs.brew.sh/Manpage)
-if [[ $cleanup_homebrew = y ]]; then
+if [[ $cleanup_homebrew == y ]]; then
     echo $LINE_SEPARATOR
 
     echo $GREEN$BOLD$UNDERLINE'Cleaning up Homebrew...\n'$END
@@ -248,7 +269,7 @@ if [[ $cleanup_homebrew = y ]]; then
 fi
 
 ### Post-install messsage
-if [[ $install_casks = y || $install_packages = y ]]; then
+if [[ $install_casks == y || $install_packages == y ]]; then
     echo $LINE_SEPARATOR
     echo $GREEN$BOLD$UNDERLINE'Installed casks or packages:\n\n'$END$BOLD'Scroll up & read console output since there might be post-install steps printed to stdout.'$END
 fi

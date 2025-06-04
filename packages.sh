@@ -1,7 +1,7 @@
 packages_to_install=(
     'chruby' # from https://jekyllrb.com/docs/installation/macos/
     'emacs'
-    'fastfetch'  # finally found out the the thing all of r/unixporn uses (used to use `neofetch`)
+    'fastfetch' # finally found out the the thing all of r/unixporn uses (used to use `neofetch`)
     'ffmpeg'
     'gh'
     'git'
@@ -32,7 +32,7 @@ packages_to_install=(
     'pure' # https://github.com/sindresorhus/pure
     'pyenv'
     'ruby-install' # from https://jekyllrb.com/docs/installation/macos/
-    'rustup' # from https://www.rust-lang.org/tools/install
+    'rustup'       # from https://www.rust-lang.org/tools/install
     'shfmt'
     'spek' # https://github.com/alexkay/spek, nice audio spectrum analyzer
     'solidity'
@@ -43,7 +43,7 @@ packages_to_install=(
     'wget'
     'withgraphite/tap/graphite' # https://graphite.dev/
     'yarn'
-    'yt-dlp'  # replaces now deprecated (per brew.sh) youtube-dl
+    'yt-dlp' # replaces now deprecated (per brew.sh) youtube-dl
     'zsh-autosuggestions'
     'zsh-syntax-highlighting'
 )
