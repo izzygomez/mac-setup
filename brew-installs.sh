@@ -126,7 +126,7 @@ LINE_SEPARATOR=$BOLD'\n---------------------------------------------------------
 
 # Import casks & packages
 echo $LINE_SEPARATOR
-echo $GREEN$BOLD$UNDERLINE"Importing casks & packages..."$END
+echo $GREEN$BOLD$UNDERLINE"Importing cask & package lists..."$END
 source ./casks.sh
 source ./packages.sh
 
