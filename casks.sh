@@ -14,6 +14,7 @@ casks_to_install=(
     'google-drive'
     'iterm2'
     'keybase'
+    'maccy'
     'monero-wallet'
     'mullvad-vpn'
     'musescore'
