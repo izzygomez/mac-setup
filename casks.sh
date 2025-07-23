@@ -9,6 +9,7 @@ casks_to_install=(
     'contexts'
     'cursor'
     'discord'
+    'docker-desktop'
     'firefox'
     'flux-app'
     'github'
