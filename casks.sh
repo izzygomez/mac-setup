@@ -16,6 +16,7 @@ casks_to_install=(
     'google-chrome'
     'google-drive'
     'iterm2'
+    'karabiner-elements'
     'keybase'
     'maccy'
     'monero-wallet'
