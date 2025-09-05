@@ -65,8 +65,9 @@ echo -n $END
 
 ### Prompt user for actions to take
 echo 'This script can update Homebrew, upgrade existing casks'
-echo '& packages, install new casks & packages, check installed'
-echo 'casks & packages lists, & cleanup Homebrew.\n'
+echo '& packages, uninstall locally-excluded casks & packages,'
+echo 'install new casks & packages, check installed casks &'
+echo 'packages lists, & cleanup Homebrew.\n'
 
 # Display menu options
 echo "Select an action to perform (default = 1):"$BOLD
@@ -74,9 +75,10 @@ echo "Select an action to perform (default = 1):"$BOLD
 echo "1) Do everything"
 echo "2) Update Homebrew"
 echo "3) Upgrade all casks & packages"
-echo "4) Install casks & packages"
-echo "5) Check installed casks & packages"
-echo "6) Cleanup Homebrew"
+echo "4) Uninstall locally-excluded casks & packages"
+echo "5) Install casks & packages"
+echo "6) Check installed casks & packages"
+echo "7) Cleanup Homebrew"
 echo "0) Exit"
 echo -n "\nEnter your choice: "$END
 
@@ -95,6 +97,7 @@ case $choice in
     echo "\nDoing everything..."
     update_homebrew=y
     upgrade_everything=y
+    uninstall_excluded=y
     install_casks=y
     check_casks=y
     install_packages=y
@@ -103,15 +106,16 @@ case $choice in
     ;;
 2) update_homebrew=y ;;
 3) upgrade_everything=y ;;
-4)
+4) uninstall_excluded=y ;;
+5)
     install_casks=y
     install_packages=y
     ;;
-5)
+6)
     check_casks=y
     check_packages=y
     ;;
-6) cleanup_homebrew=y ;;
+7) cleanup_homebrew=y ;;
 0)
     echo "\n✨ Did nothing ✨"
     exit 0
@@ -150,6 +154,84 @@ if [[ $upgrade_everything == y ]]; then
     echo $GREEN$BOLD$UNDERLINE'\nUpgrading outdated casks & packages...\n'$END
     echo $BOLD'\trunning '$PURPLE'brew upgrade\n'$END
     brew upgrade
+fi
+
+### Uninstall locally-excluded casks & packages
+if [[ $uninstall_excluded == y ]]; then
+    echo $LINE_SEPARATOR
+    echo $GREEN$BOLD$UNDERLINE"Checking for locally-excluded casks & packages to uninstall..."$END
+
+    # Handle excluded casks
+    excluded_casks_to_uninstall=()
+    if [ -f "./local/local-exclude-casks.sh" ]; then
+        source ./local/local-exclude-casks.sh
+        if [ -n "${local_exclude_casks[*]}" ]; then
+            echo $BOLD"Checking locally-excluded casks..."$END
+            for exclude_cask in "${local_exclude_casks[@]}"; do
+                # Check if the excluded cask is currently installed
+                if [[ -d "$(brew --caskroom)/$exclude_cask" ]]; then
+                    excluded_casks_to_uninstall+=($exclude_cask)
+                fi
+            done
+        fi
+    fi
+
+    # Handle excluded packages
+    excluded_packages_to_uninstall=()
+    if [ -f "./local/local-exclude-packages.sh" ]; then
+        source ./local/local-exclude-packages.sh
+        if [ -n "${local_exclude_packages[*]}" ]; then
+            echo $BOLD"Checking locally-excluded packages..."$END
+            for exclude_package in "${local_exclude_packages[@]}"; do
+                # Check if the excluded package is currently installed
+                if brew list --formula | grep -q "^${exclude_package}$"; then
+                    excluded_packages_to_uninstall+=($exclude_package)
+                fi
+            done
+        fi
+    fi
+
+    # Uninstall excluded casks
+    if [[ ${#excluded_casks_to_uninstall[@]} -gt 0 ]]; then
+        echo
+        echo $YELLOW$BOLD"Found locally-excluded casks that are currently installed: "${excluded_casks_to_uninstall[*]}$END
+        echo $RED$BOLD"Uninstalling locally-excluded casks..."$END
+
+        for uninstall_cask in "${excluded_casks_to_uninstall[@]}"; do
+            echo
+            echo $BOLD'\trunning '$PURPLE'brew uninstall --cask '$uninstall_cask$END
+            brew uninstall --cask $uninstall_cask
+        done
+
+        echo
+        echo $BOLD'Uninstalled locally-excluded casks: '$END${excluded_casks_to_uninstall[*]}
+    fi
+
+    # Uninstall excluded packages
+    if [[ ${#excluded_packages_to_uninstall[@]} -gt 0 ]]; then
+        echo
+        echo $YELLOW$BOLD"Found locally-excluded packages that are currently installed: "${excluded_packages_to_uninstall[*]}$END
+        echo $RED$BOLD"Uninstalling locally-excluded packages..."$END
+
+        for uninstall_package in "${excluded_packages_to_uninstall[@]}"; do
+            echo
+            echo $BOLD'\trunning '$PURPLE'brew uninstall '$uninstall_package$END
+            brew uninstall $uninstall_package
+        done
+
+        echo
+        echo $BOLD'Uninstalled locally-excluded packages: '$END${excluded_packages_to_uninstall[*]}
+    fi
+
+    # Summary message
+    if [[ ${#excluded_casks_to_uninstall[@]} -eq 0 && ${#excluded_packages_to_uninstall[@]} -eq 0 ]]; then
+        echo
+        echo $BOLD'No locally-excluded casks or packages found to uninstall.'$END
+        if [[ ! -f "./local/local-exclude-casks.sh" && ! -f "./local/local-exclude-packages.sh" ]]; then
+            echo $BOLD'No locally-excluded files found. Create local/local-exclude-casks.sh and/or local/local-exclude-packages.sh to define locally-excluded items.'$END
+        fi
+    fi
+    echo
 fi
 
 ### Install casks
@@ -271,9 +353,9 @@ if [[ $cleanup_homebrew == y ]]; then
 fi
 
 ### Post-install messsage
-if [[ $install_casks == y || $install_packages == y ]]; then
+if [[ $install_casks == y || $install_packages == y || $uninstall_excluded == y ]]; then
     echo $LINE_SEPARATOR
-    echo $GREEN$BOLD$UNDERLINE'Installed casks or packages:\n\n'$END$BOLD'Scroll up & read console output since there might be post-install steps printed to stdout.'$END
+    echo $GREEN$BOLD$UNDERLINE'Installed/uninstalled casks or packages:\n\n'$END$BOLD'Scroll up & read console output since there might be post-install/uninstall steps printed to stdout.'$END
 fi
 
 exit 0
