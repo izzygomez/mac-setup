@@ -38,6 +38,7 @@ casks_to_install=(
     'transmission'
     'trezor-bridge-app'
     'trezor-suite'
+    'vanilla'
     'visual-studio-code'
     'vlc'
     'vnc-viewer'
