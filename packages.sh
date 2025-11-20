@@ -7,6 +7,7 @@ packages_to_install=(
     'ffmpeg'
     'gh'
     'git'
+    'git-delta' # nice tool for better git diffs
     'gnupg'
     'go'
     'grep'
