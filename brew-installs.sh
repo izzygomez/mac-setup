@@ -126,6 +126,23 @@ esac
 
 LINE_SEPARATOR=$BOLD"--------------------------------------------------------------------------------"$END
 
+# Helper function to prompt for confirmation
+# Returns 0 (true) if user confirms, 1 (false) if user declines
+# Default is "yes" if user presses Enter
+confirm_action() {
+    local prompt_message=$1
+    echo
+    echo -n $YELLOW$BOLD"$prompt_message (Y/n): "$END
+    read -s -k 1 confirm
+    echo $confirm
+    if [[ -z $confirm || $confirm == $'\n' || $confirm == "y" || $confirm == "Y" ]]; then
+        return 0
+    else
+        echo $CYAN"Skipping..."$END
+        return 1
+    fi
+}
+
 # Import casks & packages
 echo
 echo $LINE_SEPARATOR
@@ -153,12 +170,19 @@ if [[ $upgrade_everything == y ]]; then
     echo $GREEN$BOLD$UNDERLINE"Listing casks & packages in need of upgrading..."$END
     echo
     echo $BOLD"\t> running "$PURPLE"brew outdated"$END
-    brew outdated
-    echo
-    echo $GREEN$BOLD$UNDERLINE"Upgrading outdated casks & packages..."$END
-    echo
-    echo $BOLD"\t> running "$PURPLE"brew upgrade"$END
-    brew upgrade
+    outdated_output=$(brew outdated)
+    echo "$outdated_output"
+
+    if [[ -z $outdated_output ]]; then
+        echo
+        echo $BOLD"No outdated casks or packages to upgrade."$END
+    elif confirm_action "Proceed with upgrading outdated casks & packages?"; then
+        echo
+        echo $GREEN$BOLD$UNDERLINE"Upgrading outdated casks & packages..."$END
+        echo
+        echo $BOLD"\t> running "$PURPLE"brew upgrade"$END
+        brew upgrade
+    fi
 fi
 
 ### Uninstall locally-excluded casks & packages
@@ -243,38 +267,47 @@ fi
 ### Install casks
 # TODO document these sections some more, e.g. still need to figure out how
 # to download python/ruby/etc & install correctly/not-manually
-cask=""
 casks_already_installed=()
+casks_to_be_installed=()
 casks_installed=()
-install_cask() {
-    # Doing this because `brew list --cask` is too slow.
-    if [[ -d "$(brew --caskroom)/$cask" ]]; then
-        casks_already_installed+=($cask)
-    else
-        echo
-        echo $BOLD"\t> running "$PURPLE"brew install --cask "$cask$END
-        brew install --cask $cask
-        casks_installed+=($cask)
-    fi
-}
 if [[ $install_casks == y ]]; then
     echo
     echo $LINE_SEPARATOR
     echo
-    echo $GREEN$BOLD$UNDERLINE"Installing Homebrew casks..."$END
+    echo $GREEN$BOLD$UNDERLINE"Checking Homebrew casks to install..."$END
+
+    # First pass: determine which casks need to be installed
     for c in ${casks_to_install[@]}; do
-        cask=$c
-        install_cask
+        if [[ -d "$(brew --caskroom)/$c" ]]; then
+            casks_already_installed+=($c)
+        else
+            casks_to_be_installed+=($c)
+        fi
     done
 
     echo
     echo $BOLD"Already installed casks: "$END${casks_already_installed[*]}
-    if [[ $#casks_installed == 0 ]]; then
+
+    if [[ ${#casks_to_be_installed[@]} -eq 0 ]]; then
         echo
-        echo $BOLD"No new casks installed."$END
+        echo $BOLD"No new casks to install."$END
     else
         echo
-        echo $BOLD"Newly installed casks: "$END${casks_installed[*]}
+        echo $BOLD"Casks to be installed: "$END${casks_to_be_installed[*]}
+
+        if confirm_action "Proceed with installing ${#casks_to_be_installed[@]} cask(s)?"; then
+            echo
+            echo $GREEN$BOLD$UNDERLINE"Installing Homebrew casks..."$END
+            for cask in ${casks_to_be_installed[@]}; do
+                echo
+                echo $BOLD"\t> running "$PURPLE"brew install --cask "$cask$END
+                brew install --cask $cask
+                casks_installed+=($cask)
+            done
+
+            echo
+            echo $BOLD"Newly installed casks: "$END${casks_installed[*]}
+        fi
     fi
 fi
 
@@ -303,36 +336,48 @@ if [[ $check_casks == y ]]; then
 fi
 
 ### Install packages
-package=""
 packages_already_installed=()
+packages_to_be_installed=()
 packages_installed=()
-install_package() {
-    if brew list --formula | grep -q "^${package##*/}$"; then
-        packages_already_installed+=($package)
-    else
-        echo
-        echo $BOLD"\t> running "$PURPLE"brew install "$package$END
-        brew install $package
-        packages_installed+=($package)
-    fi
-}
 if [[ $install_packages == y ]]; then
     echo
     echo $LINE_SEPARATOR
     echo
-    echo $GREEN$BOLD$UNDERLINE"Installing Homebrew packages..."$END
+    echo $GREEN$BOLD$UNDERLINE"Checking Homebrew packages to install..."$END
+
+    # First pass: determine which packages need to be installed
+    brew_formula_list=$(brew list --formula)
     for p in ${packages_to_install[@]}; do
-        package=$p
-        install_package
+        if echo "$brew_formula_list" | grep -q "^${p##*/}$"; then
+            packages_already_installed+=($p)
+        else
+            packages_to_be_installed+=($p)
+        fi
     done
+
     echo
     echo $BOLD"Already installed packages: "$END${packages_already_installed[*]}
-    if [[ $#packages_installed == 0 ]]; then
+
+    if [[ ${#packages_to_be_installed[@]} -eq 0 ]]; then
         echo
-        echo $BOLD"No new packages installed."$END
+        echo $BOLD"No new packages to install."$END
     else
         echo
-        echo $BOLD"Newly installed packages: "$END${packages_installed[*]}
+        echo $BOLD"Packages to be installed: "$END${packages_to_be_installed[*]}
+
+        if confirm_action "Proceed with installing ${#packages_to_be_installed[@]} package(s)?"; then
+            echo
+            echo $GREEN$BOLD$UNDERLINE"Installing Homebrew packages..."$END
+            for package in ${packages_to_be_installed[@]}; do
+                echo
+                echo $BOLD"\t> running "$PURPLE"brew install "$package$END
+                brew install $package
+                packages_installed+=($package)
+            done
+
+            echo
+            echo $BOLD"Newly installed packages: "$END${packages_installed[*]}
+        fi
     fi
 fi
 
