@@ -25,6 +25,11 @@
 # List all brew casks:
 # `brew list --cask`
 #
+# If brew seems broken, a combination of the following commands may help:
+# `brew doctor`
+# `brew update-reset` <- note: fetches & resets Homebrew & all tap repos. this
+#                        will destroy any changes (committed or uncommitted).
+#
 # To remove all formulae & casks installed by Homebrew, run the following
 # commands:
 # `brew remove --force $(brew list --formulae)`
@@ -126,23 +131,6 @@ esac
 
 LINE_SEPARATOR=$BOLD"--------------------------------------------------------------------------------"$END
 
-# Helper function to prompt for confirmation
-# Returns 0 (true) if user confirms, 1 (false) if user declines
-# Default is "yes" if user presses Enter
-confirm_action() {
-    local prompt_message=$1
-    echo
-    echo -n $YELLOW$BOLD"$prompt_message (Y/n): "$END
-    read -s -k 1 confirm
-    echo $confirm
-    if [[ -z $confirm || $confirm == $'\n' || $confirm == "y" || $confirm == "Y" ]]; then
-        return 0
-    else
-        echo $CYAN"Skipping..."$END
-        return 1
-    fi
-}
-
 # Import casks & packages
 echo
 echo $LINE_SEPARATOR
@@ -176,7 +164,7 @@ if [[ $upgrade_everything == y ]]; then
     if [[ -z $outdated_output ]]; then
         echo
         echo $BOLD"No outdated casks or packages to upgrade."$END
-    elif confirm_action "Proceed with upgrading outdated casks & packages?"; then
+    else
         echo
         echo $GREEN$BOLD$UNDERLINE"Upgrading outdated casks & packages..."$END
         echo
@@ -294,17 +282,12 @@ if [[ $install_casks == y ]]; then
     else
         echo
         echo $BOLD"Casks to be installed: "$END${casks_to_be_installed[*]}
-
-        if confirm_action "Proceed with installing ${#casks_to_be_installed[@]} cask(s)?"; then
-            echo
-            echo $GREEN$BOLD$UNDERLINE"Installing Homebrew casks..."$END
-            for cask in ${casks_to_be_installed[@]}; do
-                echo
-                echo $BOLD"\t> running "$PURPLE"brew install --cask "$cask$END
-                brew install --cask $cask
-                casks_installed+=($cask)
-            done
-
+        echo
+        echo $GREEN$BOLD$UNDERLINE"Installing Homebrew casks..."$END
+        echo
+        echo $BOLD"\t> running "$PURPLE"brew install --cask "${casks_to_be_installed[*]}$END
+        if brew install --cask ${casks_to_be_installed[@]}; then
+            casks_installed=(${casks_to_be_installed[@]})
             echo
             echo $BOLD"Newly installed casks: "$END${casks_installed[*]}
         fi
@@ -319,6 +302,8 @@ if [[ $check_casks == y ]]; then
     echo $GREEN$BOLD$UNDERLINE"Checking Homebrew casks..."$END
 
     brew_list_cask=($(brew list --cask))
+
+    # Check for installed casks not in install list
     installed_casks_not_in_install_list=()
     for c in ${brew_list_cask[@]}; do
         if [[ ! ${casks_to_install[@]} =~ $c ]]; then
@@ -332,6 +317,21 @@ if [[ $check_casks == y ]]; then
         echo
         echo $RED$BOLD"Some casks have been installed locally that are not reflected in install list."$END
         echo $RED$BOLD"Consider adding to install list or uninstalling locally (brew uninstall --cask \$cask): "$END${installed_casks_not_in_install_list[@]}
+    fi
+
+    # Check for casks in install list that are not installed
+    casks_in_install_list_not_installed=()
+    for c in ${casks_to_install[@]}; do
+        if [[ ! ${brew_list_cask[@]} =~ $c ]]; then
+            casks_in_install_list_not_installed+=($c)
+        fi
+    done
+    if [[ -z $casks_in_install_list_not_installed ]]; then
+        echo
+        echo $BOLD"All casks in install list are installed."$END
+    else
+        echo
+        echo $RED$BOLD"Some casks in install list are not installed: "$END${casks_in_install_list_not_installed[@]}
     fi
 fi
 
@@ -364,17 +364,12 @@ if [[ $install_packages == y ]]; then
     else
         echo
         echo $BOLD"Packages to be installed: "$END${packages_to_be_installed[*]}
-
-        if confirm_action "Proceed with installing ${#packages_to_be_installed[@]} package(s)?"; then
-            echo
-            echo $GREEN$BOLD$UNDERLINE"Installing Homebrew packages..."$END
-            for package in ${packages_to_be_installed[@]}; do
-                echo
-                echo $BOLD"\t> running "$PURPLE"brew install "$package$END
-                brew install $package
-                packages_installed+=($package)
-            done
-
+        echo
+        echo $GREEN$BOLD$UNDERLINE"Installing Homebrew packages..."$END
+        echo
+        echo $BOLD"\t> running "$PURPLE"brew install "${packages_to_be_installed[*]}$END
+        if brew install ${packages_to_be_installed[@]}; then
+            packages_installed=(${packages_to_be_installed[@]})
             echo
             echo $BOLD"Newly installed packages: "$END${packages_installed[*]}
         fi
@@ -388,6 +383,8 @@ if [[ $check_packages == y ]]; then
     echo
     echo $GREEN$BOLD$UNDERLINE"Checking Homebrew packages..."$END
     brew_leaves=($(brew leaves --installed-on-request))
+
+    # Check for installed packages not in install list
     installed_packages_not_in_install_list=()
     for p in ${brew_leaves[@]}; do
         if [[ ! ${packages_to_install[@]} =~ $p ]]; then
@@ -402,9 +399,25 @@ if [[ $check_packages == y ]]; then
         echo $RED$BOLD"Some packages have been installed locally that are not reflected in install list."$END
         echo $RED$BOLD"Consider adding to install list or uninstalling locally (brew uninstall \$package): "$END${installed_packages_not_in_install_list[@]}
     fi
+
+    # Check for packages in install list that are not installed
+    brew_formula_list=($(brew list --formula))
+    packages_in_install_list_not_installed=()
+    for p in ${packages_to_install[@]}; do
+        if [[ ! ${brew_formula_list[@]} =~ ${p##*/} ]]; then
+            packages_in_install_list_not_installed+=($p)
+        fi
+    done
+    if [[ -z $packages_in_install_list_not_installed ]]; then
+        echo
+        echo $BOLD"All packages in install list are installed."$END
+    else
+        echo
+        echo $RED$BOLD"Some packages in install list are not installed: "$END${packages_in_install_list_not_installed[@]}
+    fi
 fi
 
-### Cleanup Homebrew (see https://docs.brew.sh/Manpage)
+### Cleanup Homebrew
 if [[ $cleanup_homebrew == y ]]; then
     echo
     echo $LINE_SEPARATOR
