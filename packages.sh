@@ -1,8 +1,10 @@
 #!/bin/zsh
 
 packages_to_install=(
+    'bat'
     'chruby' # from https://jekyllrb.com/docs/installation/macos/
     'emacs'
+    'eza'
     'fastfetch' # finally found out the the thing all of r/unixporn uses (used to use `neofetch`)
     'ffmpeg'
     'gh'
