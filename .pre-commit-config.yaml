@@ -1,16 +1,38 @@
+# See pre-commit.com for documentation.
+#
+# Some helpful commands:
+# - `pre-commit install` to install the hooks.
+# - `pre-commit run --all-files --verbose` to run the hooks manually.
+# - `git commit -n/--no-verify` to skip the hooks.
+# - `pre-commit autoupdate` to update the hooks to the latest version.
+# - `pre-commit clean` to clean out cached files.
+# - In hooks configurations below with `files` & `exclude` options set: to
+#   enumerate all files that will be processed by the hook, run:
+#   `git ls-files | grep -E '{files}' | grep -v -E '{exclude}'`
+#   where {files} is the regex of files to process, & {exclude} is the regex of
+#   files to exclude.
+
 repos:
+  # Pre-commit's built-in collection
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-merge-conflict
+      - id: check-added-large-files
       - id: check-case-conflict
       - id: check-executables-have-shebangs
+      - id: check-json
+      - id: check-merge-conflict
       - id: check-shebang-scripts-are-executable
+      - id: check-symlinks
+      - id: check-yaml
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: no-commit-to-branch
+      - id: trailing-whitespace
 
+  # Shell script formatting
   - repo: https://github.com/scop/pre-commit-shfmt
-    rev: v3.7.0-4
+    rev: v3.12.0-2
     hooks:
       - id: shfmt
         args: [-w, -s, -i, "4"]

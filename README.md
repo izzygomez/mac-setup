@@ -25,21 +25,9 @@ Afterwards, simply run:
 > ./brew-installs.sh
 ```
 
-## Pre-commit Hooks
+## Pre-commit
 
-This repo uses [pre-commit](https://pre-commit.com/) to run checks on code before it is committed.
-
-To install the pre-commit hooks, run:
-
-```shell
-> pre-commit install
-```
-
-To run the hooks manually on all files, run:
-
-```shell
-> pre-commit run --all-files --verbose
-```
+This repo uses [`pre-commit`](https://pre-commit.com/) to automatically format & lint files before they are committed, & also as part of the required checks before a PR can be merged via [pre-commit.ci](https://pre-commit.ci/). See `.pre-commit-config.yaml` for configuration details.
 
 ## TODOs
 
@@ -50,3 +38,4 @@ To run the hooks manually on all files, run:
   - Also note that if gems were installed accidentally before running `source ~/.zshrc` (i.e. installed for old ruby version), then they need to be deleted to avoid some errors. Did this by running `rm -rf ~/.gem/ruby/2.6.0`.
 - Consider adding `pip` installs into this directory.
 - Automate the creation of `~/iCloudDrive` symlink: `ln -s ~/Library/Mobile\ Documents/com\~apple\~CloudDocs ~/iCloudDrive`
+- Consider adding `shellcheck` linter to `.pre-commit-config.yaml`, [see here](https://github.com/izzygomez/strava/blob/ce24dd98ce0807816d33c858506f2c87e8a6bb0e/.pre-commit-config.yaml#L52-L56) for an example.
