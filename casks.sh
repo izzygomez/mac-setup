@@ -6,6 +6,7 @@ casks_to_install=(
     'bitwarden'
     'chatgpt'
     'claude'
+    'claude-code'
     'contexts'
     'cursor'
     'discord'
