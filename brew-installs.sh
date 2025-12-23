@@ -49,16 +49,7 @@
 #
 ################################################################################
 
-PURPLE="\033[95m"
-CYAN="\033[96m"
-DARKCYAN="\033[36m"
-BLUE="\033[94m"
-GREEN="\033[92m"
-YELLOW="\033[93m"
-RED="\033[91m"
-BOLD="\033[1m"
-UNDERLINE="\033[4m"
-END="\033[0m"
+source ./utils/formatting.sh
 
 ### Check that Brew is installed
 if ! command -v brew &>/dev/null; then
@@ -107,7 +98,8 @@ case $choice in
     echo
     echo $GREEN"Doing everything..."$END
     update_brew=y
-    upgrade_everything=y
+    upgrade_casks=y
+    upgrade_packages=y
     uninstall_excluded=y
     install_casks=y
     check_casks=y
@@ -117,7 +109,10 @@ case $choice in
     ;;
 2) update_brew=y ;;
 3) upgrade_everything=y ;;
-4) uninstall_excluded=y ;;
+4)
+    upgrade_casks=y
+    upgrade_packages=y
+    ;;
 5)
     install_casks=y
     install_packages=y
@@ -160,26 +155,59 @@ if [[ $update_brew == y ]]; then
     brew update
 fi
 
-### Upgrade everything
-if [[ $upgrade_everything == y ]]; then
+### Upgrade casks
+if [[ $upgrade_casks == y ]]; then
+    # Note: Because HOMEBREW_ASK=1 only affects package commands, not cask
+    # commands, we add a manual confirmation step here.
     echo
     echo $LINE_SEPARATOR
     echo
-    echo $GREEN$BOLD$UNDERLINE"Listing casks & packages in need of upgrading..."$END
+    echo $GREEN$BOLD$UNDERLINE"Listing casks in need of upgrading..."$END
     echo
-    echo $BOLD"\t> running "$PURPLE"brew outdated"$END
-    outdated_output=$(brew outdated)
-    echo "$outdated_output"
+    echo $BOLD"\t> running "$PURPLE"brew outdated --cask"$END
+    outdated_casks=$(brew outdated --cask)
 
-    if [[ -z $outdated_output ]]; then
+    if [[ -z $outdated_casks ]]; then
         echo
-        echo $BOLD"No outdated casks or packages to upgrade."$END
+        echo $BOLD"No outdated casks to upgrade."$END
     else
+        echo "$outdated_casks"
         echo
-        echo $GREEN$BOLD$UNDERLINE"Upgrading outdated casks & packages..."$END
+        echo -n $BOLD"Do you want to upgrade these casks? [y/N] "$END
+        read -r cask_upgrade_response
+        if [[ $cask_upgrade_response =~ ^[Yy]$ ]]; then
+            echo
+            echo $GREEN$BOLD$UNDERLINE"Upgrading outdated casks..."$END
+            echo
+            echo $BOLD"\t> running "$PURPLE"brew upgrade --cask"$END
+            brew upgrade --cask
+        else
+            echo
+            echo $BOLD"Skipping cask upgrades."$END
+        fi
+    fi
+fi
+
+### Upgrade packages
+if [[ $upgrade_packages == y ]]; then
+    echo
+    echo $LINE_SEPARATOR
+    echo
+    echo $GREEN$BOLD$UNDERLINE"Listing packages in need of upgrading..."$END
+    echo
+    echo $BOLD"\t> running "$PURPLE"brew outdated --formula"$END
+    outdated_formulas=$(brew outdated --formula)
+
+    if [[ -z $outdated_formulas ]]; then
         echo
-        echo $BOLD"\t> running "$PURPLE"brew upgrade"$END
-        brew upgrade
+        echo $BOLD"No outdated packages to upgrade."$END
+    else
+        echo "$outdated_formulas"
+        echo
+        echo $GREEN$BOLD$UNDERLINE"Upgrading outdated packages..."$END
+        echo
+        echo $BOLD"\t> running "$PURPLE"brew upgrade --formula"$END
+        brew upgrade --formula
     fi
 fi
 
