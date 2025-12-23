@@ -1,5 +1,12 @@
 #!/bin/zsh
 
+#             ___   ___   ____  _
+#            | |_) | |_) | |_  \ \    /
+#            |_|_) |_| \ |_|__  \_\/\/
+#     _   _      __  _____   __    _     _     __
+#    | | | |\ | ( (`  | |   / /\  | |   | |   ( (`
+#    |_| |_| \| _)_)  |_|  /_/--\ |_|__ |_|__ _)_)
+#
 ################################################################################
 # Usage Instructions
 ################################################################################
@@ -8,33 +15,35 @@
 # `./brew-installs.sh`
 #
 ################################################################################
-# Other useful commands
+# Other useful notes
 ################################################################################
 #
 # See https://docs.brew.sh/Manpage for full documentation on Homebrew commands.
 #
 # See https://zsh.sourceforge.io/Doc/Release for a ZSH scripting manual.
 #
+# Note the following terminology equivalencies: "Homebrew" = "Brew",
+# "formula" = "package", "cask" = "GUI app".
+#
 # To enumerate list of packages (with descriptions) that have been installed,
 # run the following command (https://apple.stackexchange.com/a/154750):
 # `brew leaves --installed-on-request | xargs -n1 brew desc --eval-all`
 #
-# List all brew formulae:
-# `brew list --formulae`
+# List all Brew packages:
+# `brew list --formula`
 #
-# List all brew casks:
+# List all Brew casks:
 # `brew list --cask`
 #
-# If brew seems broken, a combination of the following commands may help:
+# If Brew seems broken, a combination of the following commands may help:
 # `brew doctor`
-# `brew update-reset` <- note: fetches & resets Homebrew & all tap repos. this
+# `brew update-reset` <- note: fetches & resets Brew & all tap repos. this
 #                        will destroy any changes (committed or uncommitted).
 #
-# To remove all formulae & casks installed by Homebrew, run the following
-# commands:
-# `brew remove --force $(brew list --formulae)`
+# To remove all packages & casks installed by Brew, run the following commands:
+# `brew remove --force $(brew list --formula)`
 # `brew remove --cask --force $(brew list --cask)`
-# This could be useful for "resetting" a setup  & re-installing them immediately
+# This could be useful for "resetting" a setup & re-installing them immediately
 # after by running this script. (see https://apple.stackexchange.com/a/339096)
 #
 ################################################################################
@@ -50,9 +59,9 @@ BOLD="\033[1m"
 UNDERLINE="\033[4m"
 END="\033[0m"
 
-### Check that Homebrew is installed
+### Check that Brew is installed
 if ! command -v brew &>/dev/null; then
-    echo $RED"Homebrew is not installed, see https://brew.sh/"$END
+    echo $RED"Brew is not installed, see https://brew.sh/"$END
     exit 1
 fi
 
@@ -65,19 +74,19 @@ echo $GREEN'
     |_| |_| \| _)_)  |_|  /_/--\ |_|__ |_|__ _)_)
 
 '$END
-echo "This script can update Homebrew, upgrade existing casks"
+echo "This script can update Brew, upgrade existing casks"
 echo "& packages, uninstall locally-excluded casks & packages,"
 echo "install new casks & packages, check installed casks &"
-echo "packages lists, & cleanup Homebrew."
+echo "packages lists, & cleanup Brew."
 echo
 echo "Select an action to perform (default = 1):"$BOLD
 echo "1) Do everything"
-echo "2) Update Homebrew"
+echo "2) Update Brew"
 echo "3) Upgrade all casks & packages"
 echo "4) Uninstall locally-excluded casks & packages"
 echo "5) Install casks & packages"
 echo "6) Check installed casks & packages"
-echo "7) Cleanup Homebrew"
+echo "7) Cleanup Brew"
 echo "0) Exit"
 echo
 echo -n "Enter your choice: "$END
@@ -96,16 +105,16 @@ case $choice in
 1)
     echo
     echo $GREEN"Doing everything..."$END
-    update_homebrew=y
+    update_brew=y
     upgrade_everything=y
     uninstall_excluded=y
     install_casks=y
     check_casks=y
     install_packages=y
     check_packages=y
-    cleanup_homebrew=y
+    cleanup_brew=y
     ;;
-2) update_homebrew=y ;;
+2) update_brew=y ;;
 3) upgrade_everything=y ;;
 4) uninstall_excluded=y ;;
 5)
@@ -116,7 +125,7 @@ case $choice in
     check_casks=y
     check_packages=y
     ;;
-7) cleanup_homebrew=y ;;
+7) cleanup_brew=y ;;
 0)
     echo
     echo $GREEN"✨ Did nothing ✨"$END
@@ -139,12 +148,12 @@ echo $GREEN$BOLD$UNDERLINE"Importing cask & package lists..."$END
 source ./casks.sh
 source ./packages.sh
 
-### Update Homebrew
-if [[ $update_homebrew == y ]]; then
+### Update Brew
+if [[ $update_brew == y ]]; then
     echo
     echo $LINE_SEPARATOR
     echo
-    echo $GREEN$BOLD$UNDERLINE"Updating Homebrew..."$END
+    echo $GREEN$BOLD$UNDERLINE"Updating Brew..."$END
     echo
     echo $BOLD"\t> running "$PURPLE"brew update"$END
     brew update
@@ -262,7 +271,7 @@ if [[ $install_casks == y ]]; then
     echo
     echo $LINE_SEPARATOR
     echo
-    echo $GREEN$BOLD$UNDERLINE"Checking Homebrew casks to install..."$END
+    echo $GREEN$BOLD$UNDERLINE"Checking Brew casks to install..."$END
 
     # First pass: determine which casks need to be installed
     for c in ${casks_to_install[@]}; do
@@ -283,7 +292,7 @@ if [[ $install_casks == y ]]; then
         echo
         echo $BOLD"Casks to be installed: "$END${casks_to_be_installed[*]}
         echo
-        echo $GREEN$BOLD$UNDERLINE"Installing Homebrew casks..."$END
+        echo $GREEN$BOLD$UNDERLINE"Installing Brew casks..."$END
         echo
         echo $BOLD"\t> running "$PURPLE"brew install --cask "${casks_to_be_installed[*]}$END
         if brew install --cask ${casks_to_be_installed[@]}; then
@@ -299,7 +308,7 @@ if [[ $check_casks == y ]]; then
     echo
     echo $LINE_SEPARATOR
     echo
-    echo $GREEN$BOLD$UNDERLINE"Checking Homebrew casks..."$END
+    echo $GREEN$BOLD$UNDERLINE"Checking Brew casks..."$END
 
     brew_list_cask=($(brew list --cask))
 
@@ -343,7 +352,7 @@ if [[ $install_packages == y ]]; then
     echo
     echo $LINE_SEPARATOR
     echo
-    echo $GREEN$BOLD$UNDERLINE"Checking Homebrew packages to install..."$END
+    echo $GREEN$BOLD$UNDERLINE"Checking Brew packages to install..."$END
 
     # First pass: determine which packages need to be installed
     brew_formula_list=$(brew list --formula)
@@ -365,7 +374,7 @@ if [[ $install_packages == y ]]; then
         echo
         echo $BOLD"Packages to be installed: "$END${packages_to_be_installed[*]}
         echo
-        echo $GREEN$BOLD$UNDERLINE"Installing Homebrew packages..."$END
+        echo $GREEN$BOLD$UNDERLINE"Installing Brew packages..."$END
         echo
         echo $BOLD"\t> running "$PURPLE"brew install "${packages_to_be_installed[*]}$END
         if brew install ${packages_to_be_installed[@]}; then
@@ -381,7 +390,7 @@ if [[ $check_packages == y ]]; then
     echo
     echo $LINE_SEPARATOR
     echo
-    echo $GREEN$BOLD$UNDERLINE"Checking Homebrew packages..."$END
+    echo $GREEN$BOLD$UNDERLINE"Checking Brew packages..."$END
     brew_leaves=($(brew leaves --installed-on-request))
 
     # Check for installed packages not in install list
@@ -417,12 +426,12 @@ if [[ $check_packages == y ]]; then
     fi
 fi
 
-### Cleanup Homebrew
-if [[ $cleanup_homebrew == y ]]; then
+### Cleanup Brew
+if [[ $cleanup_brew == y ]]; then
     echo
     echo $LINE_SEPARATOR
     echo
-    echo $GREEN$BOLD$UNDERLINE"Cleaning up Homebrew..."$END
+    echo $GREEN$BOLD$UNDERLINE"Cleaning up Brew..."$END
     echo
     echo $BOLD"\t> running "$PURPLE"brew autoremove"$END
     brew autoremove
