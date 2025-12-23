@@ -1,5 +1,7 @@
 #!/bin/zsh
 
+source ./utils/formatting.sh
+
 packages_to_install=(
     'bat'
     'chruby' # from https://jekyllrb.com/docs/installation/macos/
@@ -55,23 +57,25 @@ packages_to_install=(
 
 # Source local-specific packages if the file exists
 if [ -f "$(dirname "$0")/local/local-packages.sh" ]; then
-    echo "\n📦 Loading local packages..."
+    echo
+    echo $BOLD"Loading local packages..."$END
     source "$(dirname "$0")/local/local-packages.sh"
     # Add local packages to the main array
     if [ -n "${local_packages_to_install[*]}" ]; then
-        echo "➕ Adding local packages: ${local_packages_to_install[*]}"
+        echo "Adding local packages: ${local_packages_to_install[*]}"
         packages_to_install+=("${local_packages_to_install[@]}")
     fi
 fi
 
 # Source and process local-specific package exclusions if the file exists
 if [ -f "$(dirname "$0")/local/local-exclude-packages.sh" ]; then
-    echo "\n🚫 Loading package exclusions..."
+    echo
+    echo $BOLD"Loading local package exclusions..."$END
     source "$(dirname "$0")/local/local-exclude-packages.sh"
 
     # Filter out excluded packages using array operations
     if [ -n "${local_exclude_packages[*]}" ]; then
-        echo "➖ Excluding packages: ${local_exclude_packages[*]}"
+        echo "Excluding local packages: ${local_exclude_packages[*]}"
         for exclude_package in "${local_exclude_packages[@]}"; do
             packages_to_install=("${packages_to_install[@]/$exclude_package/}")
         done
