@@ -4,10 +4,10 @@ This directory contains example configuration files to specify additional packag
 
 ## Files
 
-- `local-casks.sh.example`: Define additional Homebrew casks to install locally
-- `local-packages.sh.example`: Define additional Homebrew packages to install locally
-- `local-exclude-casks.sh.example`: Define Homebrew casks to exclude from installation locally
-- `local-exclude-packages.sh.example`: Define Homebrew packages to exclude from installation locally
+- `local-casks.sh.example`: Define additional Brew casks to install locally
+- `local-packages.sh.example`: Define additional Brew packages to install locally
+- `local-exclude-casks.sh.example`: Define Brew casks to exclude from installation locally
+- `local-exclude-packages.sh.example`: Define Brew packages to exclude from installation locally
 
 ## Usage
 

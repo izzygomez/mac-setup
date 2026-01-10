@@ -19,12 +19,14 @@
 # Other useful notes
 ################################################################################
 #
-# See https://docs.brew.sh/Manpage for full documentation on Homebrew commands.
+# See https://docs.brew.sh/Manpage for full documentation on Brew commands.
 #
 # See https://zsh.sourceforge.io/Doc/Release for a ZSH scripting manual.
 #
-# Note the following terminology equivalencies: "Homebrew" = "Brew",
-# "formula" = "package", "cask" = "GUI app".
+# Note the following terminology equivalencies:
+# - "Homebrew" = "Brew"
+# - "formula" = "package"
+# - "cask" = "GUI app"
 #
 # To enumerate list of packages (with descriptions) that have been installed,
 # run the following command (https://apple.stackexchange.com/a/154750):
