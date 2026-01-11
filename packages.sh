@@ -35,8 +35,8 @@ packages_to_install=(
     # nvm should be installed via script in GitHub repo.
     # 'nvm'
     'poetry'
+    'powerlevel10k' # https://github.com/romkatv/powerlevel10k
     'pre-commit'
-    'pure' # https://github.com/sindresorhus/pure
     'pyenv'
     'ruby-install' # from https://jekyllrb.com/docs/installation/macos/
     'rustup'       # from https://www.rust-lang.org/tools/install
