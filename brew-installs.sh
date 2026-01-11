@@ -181,8 +181,11 @@ if [[ $upgrade_casks == y ]]; then
             echo
             echo $GREEN$BOLD$UNDERLINE"Upgrading outdated casks..."$END
             echo
-            echo $BOLD"\t> running "$PURPLE"brew upgrade --cask"$END
-            brew upgrade --cask
+            # strictly only upgrade casks that are in the outdated list from
+            # above. if we re-ran `brew outdated --cask`, it is possible this
+            # list has grown between prompt being displayed & user accepting.
+            echo $BOLD"\t> running "$PURPLE"brew upgrade --cask $outdated_casks"$END
+            brew upgrade --cask $outdated_casks
         else
             echo
             echo $BOLD"Skipping cask upgrades."$END
