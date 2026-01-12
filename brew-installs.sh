@@ -170,6 +170,7 @@ fi
 # If brew fixes this in the future & `brew upgrade --cask` respects HOMEBREW_ASK
 # on its own, we can simplify this to just run `brew upgrade --cask` directly
 # (similar to how the packages section works below).
+casks_upgraded=()
 if [[ $upgrade_casks == y ]]; then
     echo
     echo $LINE_SEPARATOR
@@ -194,11 +195,14 @@ if [[ $upgrade_casks == y ]]; then
             outdated_casks+=("$cask") # append $cask to array
         done <<<"$outdated_output"    # feed $outdated_output as stdin to while loop
         echo $BOLD"\t> running "$PURPLE"brew upgrade --cask ${outdated_casks[*]}"$END
-        brew upgrade --cask "${outdated_casks[@]}"
+        if brew upgrade --cask "${outdated_casks[@]}"; then
+            casks_upgraded=(${outdated_casks[@]})
+        fi
     fi
 fi
 
 ### Upgrade packages
+packages_upgraded=()
 if [[ $upgrade_packages == y ]]; then
     echo
     echo $LINE_SEPARATOR
@@ -206,22 +210,32 @@ if [[ $upgrade_packages == y ]]; then
     echo $GREEN$BOLD$UNDERLINE"Listing packages in need of upgrading..."$END
     echo
     echo $BOLD"\t> running "$PURPLE"brew outdated --formula"$END
-    outdated_formulas=$(brew outdated --formula)
+    outdated_output=$(brew outdated --formula)
 
-    if [[ -z $outdated_formulas ]]; then
+    if [[ -z $outdated_output ]]; then
         echo
         echo $BOLD"No outdated packages to upgrade."$END
     else
-        echo "$outdated_formulas"
+        echo "$outdated_output"
         echo
         echo $GREEN$BOLD$UNDERLINE"Upgrading outdated packages..."$END
         echo
-        echo $BOLD"\t> running "$PURPLE"brew upgrade --formula"$END
-        brew upgrade --formula
+        # Convert newline-separated string to array for proper argument passing.
+        # We need an array so each package becomes a separate argument to brew.
+        outdated_packages=()
+        while read -r pkg; do           # read one line at a time into $pkg
+            outdated_packages+=("$pkg") # append $pkg to array
+        done <<<"$outdated_output"      # feed $outdated_output as stdin to while loop
+        echo $BOLD"\t> running "$PURPLE"brew upgrade --formula ${outdated_packages[*]}"$END
+        if brew upgrade --formula "${outdated_packages[@]}"; then
+            packages_upgraded=(${outdated_packages[@]})
+        fi
     fi
 fi
 
 ### Uninstall locally-excluded casks & packages
+excluded_casks_to_uninstall=()
+excluded_packages_to_uninstall=()
 if [[ $uninstall_excluded == y ]]; then
     echo
     echo $LINE_SEPARATOR
@@ -229,7 +243,6 @@ if [[ $uninstall_excluded == y ]]; then
     echo $GREEN$BOLD$UNDERLINE"Checking for locally-excluded casks & packages to uninstall..."$END
 
     # Handle excluded casks
-    excluded_casks_to_uninstall=()
     if [ -f "./local/local-exclude-casks.sh" ]; then
         source ./local/local-exclude-casks.sh
         if [ -n "${local_exclude_casks[*]}" ]; then
@@ -245,7 +258,6 @@ if [[ $uninstall_excluded == y ]]; then
     fi
 
     # Handle excluded packages
-    excluded_packages_to_uninstall=()
     if [ -f "./local/local-exclude-packages.sh" ]; then
         source ./local/local-exclude-packages.sh
         if [ -n "${local_exclude_packages[*]}" ]; then
@@ -479,14 +491,20 @@ if [[ $cleanup_brew == y ]]; then
     brew cleanup --prune=all -s
 fi
 
-### Post-install messsage
-if [[ $install_casks == y || $install_packages == y || $uninstall_excluded == y ]]; then
+### Post-operation message
+# Only show if something was actually installed, uninstalled, or upgraded
+if [[ ${#casks_installed[@]} -gt 0 ||
+    ${#packages_installed[@]} -gt 0 ||
+    ${#excluded_casks_to_uninstall[@]} -gt 0 ||
+    ${#excluded_packages_to_uninstall[@]} -gt 0 ||
+    ${#casks_upgraded[@]} -gt 0 ||
+    ${#packages_upgraded[@]} -gt 0 ]]; then
     echo
     echo $LINE_SEPARATOR
     echo
-    echo $GREEN$BOLD$UNDERLINE"Installed/uninstalled casks or packages:"$END
+    echo $GREEN$BOLD$UNDERLINE"Installed/uninstalled/upgraded casks or packages:"$END
     echo
-    echo $BOLD"Scroll up & read console output since there might be post-install/uninstall steps printed to stdout."$END
+    echo $BOLD"Scroll up & read console output since there might be post-install/uninstall/upgrade steps printed to stdout."$END
 fi
 
 exit 0
