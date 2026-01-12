@@ -1,5 +1,4 @@
 #!/bin/zsh
-
 ################################################################################
 #             ___   ___   ____  _
 #            | |_) | |_) | |_  \ \    /
@@ -137,6 +136,30 @@ case $choice in
 esac
 
 LINE_SEPARATOR=$BOLD"--------------------------------------------------------------------------------"$END
+
+### Check if HOMEBREW_ASK is set
+# If install or upgrade operations are selected but HOMEBREW_ASK is not set,
+# warn the user that commands will run without confirmation prompts.
+if [[ $install_casks == y || $install_packages == y || $upgrade_casks == y || $upgrade_packages == y ]]; then
+    if [[ $HOMEBREW_ASK != 1 ]]; then
+        echo
+        echo $YELLOW$BOLD"Warning: HOMEBREW_ASK is not set."$END
+        echo $BOLD"Install & upgrade commands will run without asking for confirmation."$END
+        echo
+        echo -n "Continue anyway? [y/N]: "
+        read -s -k 1 confirm
+        # If Enter is pressed, `confirm` is a newline/empty string, so we default to "N".
+        if [[ -z $confirm || $confirm == $'\n' ]]; then
+            confirm="N"
+        fi
+        echo $confirm
+        if [[ ! $confirm =~ ^[Yy]$ ]]; then
+            echo
+            echo $GREEN"Exiting. Set HOMEBREW_ASK=1 before running this script if you want confirmation prompts."$END
+            exit 0
+        fi
+    fi
+fi
 
 # Import casks & packages
 echo
