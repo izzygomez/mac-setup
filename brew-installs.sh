@@ -110,11 +110,11 @@ case $choice in
     cleanup_brew=y
     ;;
 2) update_brew=y ;;
-3) upgrade_everything=y ;;
-4)
+3)
     upgrade_casks=y
     upgrade_packages=y
     ;;
+4) uninstall_excluded=y ;;
 5)
     install_casks=y
     install_packages=y
@@ -158,38 +158,43 @@ if [[ $update_brew == y ]]; then
 fi
 
 ### Upgrade casks
+# Note on HOMEBREW_ASK behavior (as of Jan 2026):
+# The docs say HOMEBREW_ASK only affects formula commands, but it actually works
+# for cask upgrades IF you pass cask names: `brew upgrade --cask a b c`.
+# However, `brew upgrade --cask` (no args) or `brew upgrade --cask --ask` does
+# NOT prompt for confirmation — it just runs. This seems like a bug.
+#
+# To work around this, we capture the outdated casks list first & pass them
+# explicitly. This gives us the HOMEBREW_ASK confirmation w/o a manual prompt.
+#
+# If brew fixes this in the future & `brew upgrade --cask` respects HOMEBREW_ASK
+# on its own, we can simplify this to just run `brew upgrade --cask` directly
+# (similar to how the packages section works below).
 if [[ $upgrade_casks == y ]]; then
-    # Note: Because HOMEBREW_ASK=1 only affects package commands, not cask
-    # commands, we add a manual confirmation step here.
     echo
     echo $LINE_SEPARATOR
     echo
     echo $GREEN$BOLD$UNDERLINE"Listing casks in need of upgrading..."$END
     echo
     echo $BOLD"\t> running "$PURPLE"brew outdated --cask"$END
-    outdated_casks=$(brew outdated --cask)
+    outdated_output=$(brew outdated --cask)
 
-    if [[ -z $outdated_casks ]]; then
+    if [[ -z $outdated_output ]]; then
         echo
         echo $BOLD"No outdated casks to upgrade."$END
     else
-        echo "$outdated_casks"
+        echo "$outdated_output"
         echo
-        echo -n $BOLD"Do you want to upgrade these casks? [y/N] "$END
-        read -r cask_upgrade_response
-        if [[ $cask_upgrade_response =~ ^[Yy]$ ]]; then
-            echo
-            echo $GREEN$BOLD$UNDERLINE"Upgrading outdated casks..."$END
-            echo
-            # strictly only upgrade casks that are in the outdated list from
-            # above. if we re-ran `brew outdated --cask`, it is possible this
-            # list has grown between prompt being displayed & user accepting.
-            echo $BOLD"\t> running "$PURPLE"brew upgrade --cask $outdated_casks"$END
-            brew upgrade --cask $outdated_casks
-        else
-            echo
-            echo $BOLD"Skipping cask upgrades."$END
-        fi
+        echo $GREEN$BOLD$UNDERLINE"Upgrading outdated casks..."$END
+        echo
+        # Convert newline-separated string to array for proper argument passing.
+        # We need an array so each cask becomes a separate argument to brew.
+        outdated_casks=()
+        while read -r cask; do        # read one line at a time into $cask
+            outdated_casks+=("$cask") # append $cask to array
+        done <<<"$outdated_output"    # feed $outdated_output as stdin to while loop
+        echo $BOLD"\t> running "$PURPLE"brew upgrade --cask ${outdated_casks[*]}"$END
+        brew upgrade --cask "${outdated_casks[@]}"
     fi
 fi
 
