@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-source ./utils/formatting.sh
+source ./utils/style.sh
 
 casks_to_install=(
     'alfred'
