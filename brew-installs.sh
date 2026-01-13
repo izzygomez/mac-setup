@@ -73,14 +73,14 @@ echo "install new casks & packages, check installed casks &"
 echo "packages lists, & cleanup Brew."$END
 echo
 echo "Select an action to perform (default = 1):"$BOLD
-echo "1) Do everything"
-echo "2) Update Brew"
-echo "3) Upgrade all casks & packages"
-echo "4) Uninstall locally-excluded casks & packages"
-echo "5) Install casks & packages"
-echo "6) Check installed casks & packages"
-echo "7) Cleanup Brew"
-echo "0) Exit"
+echo $GREEN"1)"$END" Do everything"
+echo $GREEN"2)"$END" Update Brew"
+echo $GREEN"3)"$END" Upgrade all casks & packages"
+echo $GREEN"4)"$END" Uninstall locally-excluded casks & packages"
+echo $GREEN"5)"$END" Install casks & packages"
+echo $GREEN"6)"$END" Check installed casks & packages"
+echo $GREEN"7)"$END" Cleanup Brew"
+echo $GREEN"0)"$END" Exit"
 echo
 echo -n "Enter your choice: "$END
 
@@ -125,7 +125,7 @@ case $choice in
 7) cleanup_brew=y ;;
 0)
     echo
-    echo $BOLD"✨ Did nothing ✨"$END
+    echo $GREEN$BOLD"Exiting..."$END
     exit 0
     ;;
 *)
