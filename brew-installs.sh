@@ -50,11 +50,11 @@
 #
 ################################################################################
 
-source ./utils/formatting.sh
+source ./utils/style.sh
 
 ### Check that Brew is installed
 if ! command -v brew &>/dev/null; then
-    echo $RED"Brew is not installed, see https://brew.sh/"$END
+    echo $ICON_ERROR$RED" Brew is not installed, see https://brew.sh/"$END
     exit 1
 fi
 
@@ -67,10 +67,10 @@ echo $GREEN'
     |_| |_| \| _)_)  |_|  /_/--\ |_|__ |_|__ _)_)
 
 '$END
-echo "This script can update Brew, upgrade existing casks"
+echo $DIM"This script can update Brew, upgrade existing casks"
 echo "& packages, uninstall locally-excluded casks & packages,"
 echo "install new casks & packages, check installed casks &"
-echo "packages lists, & cleanup Brew."
+echo "packages lists, & cleanup Brew."$END
 echo
 echo "Select an action to perform (default = 1):"$BOLD
 echo "1) Do everything"
@@ -97,7 +97,7 @@ echo $choice
 case $choice in
 1)
     echo
-    echo $GREEN"Doing everything..."$END
+    echo $GREEN$BOLD"Doing everything..."$END
     update_brew=y
     upgrade_casks=y
     upgrade_packages=y
@@ -125,17 +125,15 @@ case $choice in
 7) cleanup_brew=y ;;
 0)
     echo
-    echo $GREEN"✨ Did nothing ✨"$END
+    echo $BOLD"✨ Did nothing ✨"$END
     exit 0
     ;;
 *)
     echo
-    echo $RED"Invalid choice. Exiting."$END
+    echo $ICON_ERROR$RED" Invalid choice. Exiting."$END
     exit 1
     ;;
 esac
-
-LINE_SEPARATOR=$BOLD"--------------------------------------------------------------------------------"$END
 
 ### Check if HOMEBREW_ASK is set
 # If install or upgrade operations are selected but HOMEBREW_ASK is not set,
@@ -143,7 +141,7 @@ LINE_SEPARATOR=$BOLD"-----------------------------------------------------------
 if [[ $install_casks == y || $install_packages == y || $upgrade_casks == y || $upgrade_packages == y ]]; then
     if [[ $HOMEBREW_ASK != 1 ]]; then
         echo
-        echo $YELLOW$BOLD"Warning: HOMEBREW_ASK is not set."$END
+        echo $ICON_WARN$YELLOW$BOLD" Warning: HOMEBREW_ASK is not set."$END
         echo $BOLD"Install & upgrade commands will run without asking for confirmation."$END
         echo
         echo -n "Continue anyway? [y/N]: "
@@ -155,32 +153,31 @@ if [[ $install_casks == y || $install_packages == y || $upgrade_casks == y || $u
         echo $confirm
         if [[ ! $confirm =~ ^[Yy]$ ]]; then
             echo
-            echo $GREEN"Exiting. Set HOMEBREW_ASK=1 before running this script if you want confirmation prompts."$END
+            echo $BOLD"Exiting. Set HOMEBREW_ASK=1 before running this script if you want confirmation prompts."$END
             exit 0
         fi
     fi
 fi
 
-# Import casks & packages
+### Import casks & packages
 echo
-echo $LINE_SEPARATOR
-echo
-echo $GREEN$BOLD$UNDERLINE"Importing cask & package lists..."$END
+echo $BOLD"First, importing cask & package lists..."$END
 source ./casks.sh
 source ./packages.sh
 
 ### Update Brew
 if [[ $update_brew == y ]]; then
     echo
-    echo $LINE_SEPARATOR
+    echo $BOLD_SEPARATOR
     echo
-    echo $GREEN$BOLD$UNDERLINE"Updating Brew..."$END
+    echo $GREEN$BOLD"Updating Brew..."$END
     echo
-    echo $BOLD"\t> running "$PURPLE"brew update"$END
+    echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew update"$END
+    echo
     brew update
 fi
 
-### Upgrade casks
+### Upgrade all casks & packages
 # Note on HOMEBREW_ASK behavior (as of Jan 2026):
 # The docs say HOMEBREW_ASK only affects formula commands, but it actually works
 # for cask upgrades IF you pass cask names: `brew upgrade --cask a b c`.
@@ -194,22 +191,30 @@ fi
 # on its own, we can simplify this to just run `brew upgrade --cask` directly
 # (similar to how the packages section works below).
 casks_upgraded=()
+packages_upgraded=()
+if [[ $upgrade_casks == y || $upgrade_packages == y ]]; then
+    echo
+    echo $BOLD_SEPARATOR
+    echo
+    echo $GREEN$BOLD"Upgrading all casks & packages..."$END
+fi
+
 if [[ $upgrade_casks == y ]]; then
     echo
-    echo $LINE_SEPARATOR
+    echo $LIGHT_SEPARATOR
     echo
-    echo $GREEN$BOLD$UNDERLINE"Listing casks in need of upgrading..."$END
+    echo $BOLD"Listing casks in need of upgrading..."$END
     echo
-    echo $BOLD"\t> running "$PURPLE"brew outdated --cask"$END
+    echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew outdated --cask"$END
     outdated_output=$(brew outdated --cask)
 
     if [[ -z $outdated_output ]]; then
         echo
-        echo $BOLD"No outdated casks to upgrade."$END
+        echo $ICON_CHECK$BOLD" No outdated casks to upgrade."$END
     else
         echo "$outdated_output"
         echo
-        echo $GREEN$BOLD$UNDERLINE"Upgrading outdated casks..."$END
+        echo $BOLD"Upgrading outdated casks..."$END
         echo
         # Convert newline-separated string to array for proper argument passing.
         # We need an array so each cask becomes a separate argument to brew.
@@ -217,31 +222,29 @@ if [[ $upgrade_casks == y ]]; then
         while read -r cask; do        # read one line at a time into $cask
             outdated_casks+=("$cask") # append $cask to array
         done <<<"$outdated_output"    # feed $outdated_output as stdin to while loop
-        echo $BOLD"\t> running "$PURPLE"brew upgrade --cask ${outdated_casks[*]}"$END
+        echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew upgrade --cask ${outdated_casks[*]}"$END
         if brew upgrade --cask "${outdated_casks[@]}"; then
             casks_upgraded=(${outdated_casks[@]})
         fi
     fi
 fi
 
-### Upgrade packages
-packages_upgraded=()
 if [[ $upgrade_packages == y ]]; then
     echo
-    echo $LINE_SEPARATOR
+    echo $LIGHT_SEPARATOR
     echo
-    echo $GREEN$BOLD$UNDERLINE"Listing packages in need of upgrading..."$END
+    echo $BOLD"Listing packages in need of upgrading..."$END
     echo
-    echo $BOLD"\t> running "$PURPLE"brew outdated --formula"$END
+    echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew outdated --formula"$END
     outdated_output=$(brew outdated --formula)
 
     if [[ -z $outdated_output ]]; then
         echo
-        echo $BOLD"No outdated packages to upgrade."$END
+        echo $ICON_CHECK$BOLD" No outdated packages to upgrade."$END
     else
         echo "$outdated_output"
         echo
-        echo $GREEN$BOLD$UNDERLINE"Upgrading outdated packages..."$END
+        echo $BOLD"Upgrading outdated packages..."$END
         echo
         # Convert newline-separated string to array for proper argument passing.
         # We need an array so each package becomes a separate argument to brew.
@@ -249,7 +252,7 @@ if [[ $upgrade_packages == y ]]; then
         while read -r pkg; do           # read one line at a time into $pkg
             outdated_packages+=("$pkg") # append $pkg to array
         done <<<"$outdated_output"      # feed $outdated_output as stdin to while loop
-        echo $BOLD"\t> running "$PURPLE"brew upgrade --formula ${outdated_packages[*]}"$END
+        echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew upgrade --formula ${outdated_packages[*]}"$END
         if brew upgrade --formula "${outdated_packages[@]}"; then
             packages_upgraded=(${outdated_packages[@]})
         fi
@@ -261,9 +264,9 @@ excluded_casks_to_uninstall=()
 excluded_packages_to_uninstall=()
 if [[ $uninstall_excluded == y ]]; then
     echo
-    echo $LINE_SEPARATOR
+    echo $BOLD_SEPARATOR
     echo
-    echo $GREEN$BOLD$UNDERLINE"Checking for locally-excluded casks & packages to uninstall..."$END
+    echo $GREEN$BOLD"Uninstalling locally-excluded casks & packages..."$END
 
     # Handle excluded casks
     if [ -f "./local/local-exclude-casks.sh" ]; then
@@ -298,54 +301,65 @@ if [[ $uninstall_excluded == y ]]; then
     # Uninstall excluded casks
     if [[ ${#excluded_casks_to_uninstall[@]} -gt 0 ]]; then
         echo
-        echo $YELLOW$BOLD"Found locally-excluded casks that are currently installed: "${excluded_casks_to_uninstall[*]}$END
+        echo $ICON_WARN$YELLOW$BOLD" Found locally-excluded casks that are currently installed: "$CYAN${excluded_casks_to_uninstall[*]}$END
         echo
-        echo $RED$BOLD"Uninstalling locally-excluded casks..."$END
+        echo $BOLD"Uninstalling locally-excluded casks..."$END
 
         for uninstall_cask in "${excluded_casks_to_uninstall[@]}"; do
             echo
-            echo $BOLD"\t> running "$PURPLE"brew uninstall --cask "$uninstall_cask$END
+            echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew uninstall --cask "$uninstall_cask$END
             brew uninstall --cask $uninstall_cask
         done
 
         echo
-        echo $BOLD"Uninstalled locally-excluded casks: "$END${excluded_casks_to_uninstall[*]}
+        echo $ICON_CHECK$BOLD" Uninstalled locally-excluded casks: "$CYAN${excluded_casks_to_uninstall[*]}$END
     fi
 
     # Uninstall excluded packages
     if [[ ${#excluded_packages_to_uninstall[@]} -gt 0 ]]; then
         echo
-        echo $YELLOW$BOLD"Found locally-excluded packages that are currently installed: "${excluded_packages_to_uninstall[*]}$END
-        echo $RED$BOLD"Uninstalling locally-excluded packages..."$END
+        echo $ICON_WARN$YELLOW$BOLD" Found locally-excluded packages that are currently installed: "$CYAN${excluded_packages_to_uninstall[*]}$END
+        echo
+        echo $BOLD"Uninstalling locally-excluded packages..."$END
 
         for uninstall_package in "${excluded_packages_to_uninstall[@]}"; do
             echo
-            echo $BOLD"\t> running "$PURPLE"brew uninstall "$uninstall_package$END
+            echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew uninstall "$uninstall_package$END
             brew uninstall $uninstall_package
         done
 
         echo
-        echo $BOLD"Uninstalled locally-excluded packages: "$END${excluded_packages_to_uninstall[*]}
+        echo $ICON_CHECK$BOLD" Uninstalled locally-excluded packages: "$CYAN${excluded_packages_to_uninstall[*]}$END
     fi
 
     # Summary message
     if [[ ${#excluded_casks_to_uninstall[@]} -eq 0 && ${#excluded_packages_to_uninstall[@]} -eq 0 ]]; then
         echo
-        echo $BOLD"No locally-excluded casks or packages found to uninstall."$END
+        echo $ICON_CHECK$BOLD" No locally-excluded casks or packages found to uninstall."$END
     fi
 fi
 
-### Install casks
+### Install casks & packages
 # TODO document these sections some more, e.g. still need to figure out how
 # to download python/ruby/etc & install correctly/not-manually
 casks_already_installed=()
 casks_to_be_installed=()
 casks_installed=()
+packages_already_installed=()
+packages_to_be_installed=()
+packages_installed=()
+if [[ $install_casks == y || $install_packages == y ]]; then
+    echo
+    echo $BOLD_SEPARATOR
+    echo
+    echo $GREEN$BOLD"Installing casks & packages..."$END
+fi
+
 if [[ $install_casks == y ]]; then
     echo
-    echo $LINE_SEPARATOR
+    echo $LIGHT_SEPARATOR
     echo
-    echo $GREEN$BOLD$UNDERLINE"Checking Brew casks to install..."$END
+    echo $BOLD"Checking Brew casks to install..."$END
 
     # First pass: determine which casks need to be installed
     for c in ${casks_to_install[@]}; do
@@ -357,76 +371,31 @@ if [[ $install_casks == y ]]; then
     done
 
     echo
-    echo $BOLD"Already installed casks: "$END${casks_already_installed[*]}
+    echo $BOLD"Already installed casks: "$END$DIM${casks_already_installed[*]}$END
 
     if [[ ${#casks_to_be_installed[@]} -eq 0 ]]; then
         echo
-        echo $BOLD"No new casks to install."$END
+        echo $ICON_CHECK$BOLD" No new casks to install."$END
     else
         echo
-        echo $BOLD"Casks to be installed: "$END${casks_to_be_installed[*]}
+        echo $BOLD"Casks to be installed: "$END$CYAN${casks_to_be_installed[*]}$END
         echo
-        echo $GREEN$BOLD$UNDERLINE"Installing Brew casks..."$END
+        echo $BOLD"Installing Brew casks..."$END
         echo
-        echo $BOLD"\t> running "$PURPLE"brew install --cask "${casks_to_be_installed[*]}$END
+        echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew install --cask "${casks_to_be_installed[*]}$END
         if brew install --cask ${casks_to_be_installed[@]}; then
             casks_installed=(${casks_to_be_installed[@]})
             echo
-            echo $BOLD"Newly installed casks: "$END${casks_installed[*]}
+            echo $ICON_CHECK$BOLD" Newly installed casks: "$CYAN${casks_installed[*]}$END
         fi
     fi
 fi
 
-### Check casks
-if [[ $check_casks == y ]]; then
-    echo
-    echo $LINE_SEPARATOR
-    echo
-    echo $GREEN$BOLD$UNDERLINE"Checking Brew casks..."$END
-
-    brew_list_cask=($(brew list --cask))
-
-    # Check for installed casks not in install list
-    installed_casks_not_in_install_list=()
-    for c in ${brew_list_cask[@]}; do
-        if [[ ! ${casks_to_install[@]} =~ $c ]]; then
-            installed_casks_not_in_install_list+=($c)
-        fi
-    done
-    if [[ -z $installed_casks_not_in_install_list ]]; then
-        echo
-        echo $BOLD"All installed casks are in install list."$END
-    else
-        echo
-        echo $RED$BOLD"Some casks have been installed locally that are not reflected in install list."$END
-        echo $RED$BOLD"Consider adding to install list or uninstalling locally (brew uninstall --cask \$cask): "$END${installed_casks_not_in_install_list[@]}
-    fi
-
-    # Check for casks in install list that are not installed
-    casks_in_install_list_not_installed=()
-    for c in ${casks_to_install[@]}; do
-        if [[ ! ${brew_list_cask[@]} =~ $c ]]; then
-            casks_in_install_list_not_installed+=($c)
-        fi
-    done
-    if [[ -z $casks_in_install_list_not_installed ]]; then
-        echo
-        echo $BOLD"All casks in install list are installed."$END
-    else
-        echo
-        echo $RED$BOLD"Some casks in install list are not installed: "$END${casks_in_install_list_not_installed[@]}
-    fi
-fi
-
-### Install packages
-packages_already_installed=()
-packages_to_be_installed=()
-packages_installed=()
 if [[ $install_packages == y ]]; then
     echo
-    echo $LINE_SEPARATOR
+    echo $LIGHT_SEPARATOR
     echo
-    echo $GREEN$BOLD$UNDERLINE"Checking Brew packages to install..."$END
+    echo $BOLD"Checking Brew packages to install..."$END
 
     # First pass: determine which packages need to be installed
     brew_formula_list=$(brew list --formula)
@@ -439,32 +408,79 @@ if [[ $install_packages == y ]]; then
     done
 
     echo
-    echo $BOLD"Already installed packages: "$END${packages_already_installed[*]}
+    echo $BOLD"Already installed packages: "$END$DIM${packages_already_installed[*]}$END
 
     if [[ ${#packages_to_be_installed[@]} -eq 0 ]]; then
         echo
-        echo $BOLD"No new packages to install."$END
+        echo $ICON_CHECK$BOLD" No new packages to install."$END
     else
         echo
-        echo $BOLD"Packages to be installed: "$END${packages_to_be_installed[*]}
+        echo $BOLD"Packages to be installed: "$END$CYAN${packages_to_be_installed[*]}$END
         echo
-        echo $GREEN$BOLD$UNDERLINE"Installing Brew packages..."$END
+        echo $BOLD"Installing Brew packages..."$END
         echo
-        echo $BOLD"\t> running "$PURPLE"brew install "${packages_to_be_installed[*]}$END
+        echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew install "${packages_to_be_installed[*]}$END
         if brew install ${packages_to_be_installed[@]}; then
             packages_installed=(${packages_to_be_installed[@]})
             echo
-            echo $BOLD"Newly installed packages: "$END${packages_installed[*]}
+            echo $ICON_CHECK$BOLD" Newly installed packages: "$CYAN${packages_installed[*]}$END
         fi
     fi
 fi
 
-### Check packages
+### Check installed casks & packages
+if [[ $check_casks == y || $check_packages == y ]]; then
+    echo
+    echo $BOLD_SEPARATOR
+    echo
+    echo $GREEN$BOLD"Checking installed casks & packages..."$END
+fi
+
+if [[ $check_casks == y ]]; then
+    echo
+    echo $LIGHT_SEPARATOR
+    echo
+    echo $BOLD"Checking Brew casks..."$END
+
+    brew_list_cask=($(brew list --cask))
+
+    # Check for installed casks not in install list
+    installed_casks_not_in_install_list=()
+    for c in ${brew_list_cask[@]}; do
+        if [[ ! ${casks_to_install[@]} =~ $c ]]; then
+            installed_casks_not_in_install_list+=($c)
+        fi
+    done
+    if [[ -z $installed_casks_not_in_install_list ]]; then
+        echo
+        echo $ICON_CHECK$BOLD" All installed casks are in install list."$END
+    else
+        echo
+        echo $ICON_WARN$YELLOW$BOLD" Some casks have been installed locally that are not reflected in install list."$END
+        echo $YELLOW$BOLD"Consider adding to install list or uninstalling locally (brew uninstall --cask \$cask): "$CYAN${installed_casks_not_in_install_list[@]}$END
+    fi
+
+    # Check for casks in install list that are not installed
+    casks_in_install_list_not_installed=()
+    for c in ${casks_to_install[@]}; do
+        if [[ ! ${brew_list_cask[@]} =~ $c ]]; then
+            casks_in_install_list_not_installed+=($c)
+        fi
+    done
+    if [[ -z $casks_in_install_list_not_installed ]]; then
+        echo
+        echo $ICON_CHECK$BOLD" All casks in install list are installed."$END
+    else
+        echo
+        echo $ICON_WARN$YELLOW$BOLD" Some casks in install list are not installed: "$CYAN${casks_in_install_list_not_installed[@]}$END
+    fi
+fi
+
 if [[ $check_packages == y ]]; then
     echo
-    echo $LINE_SEPARATOR
+    echo $LIGHT_SEPARATOR
     echo
-    echo $GREEN$BOLD$UNDERLINE"Checking Brew packages..."$END
+    echo $BOLD"Checking Brew packages..."$END
     brew_leaves=($(brew leaves --installed-on-request))
 
     # Check for installed packages not in install list
@@ -476,11 +492,11 @@ if [[ $check_packages == y ]]; then
     done
     if [[ -z $installed_packages_not_in_install_list ]]; then
         echo
-        echo $BOLD"All installed packages are in install list."$END
+        echo $ICON_CHECK$BOLD" All installed packages are in install list."$END
     else
         echo
-        echo $RED$BOLD"Some packages have been installed locally that are not reflected in install list."$END
-        echo $RED$BOLD"Consider adding to install list or uninstalling locally (brew uninstall \$package): "$END${installed_packages_not_in_install_list[@]}
+        echo $ICON_WARN$YELLOW$BOLD" Some packages have been installed locally that are not reflected in install list."$END
+        echo $YELLOW$BOLD"Consider adding to install list or uninstalling locally (brew uninstall \$package): "$CYAN${installed_packages_not_in_install_list[@]}$END
     fi
 
     # Check for packages in install list that are not installed
@@ -493,24 +509,24 @@ if [[ $check_packages == y ]]; then
     done
     if [[ -z $packages_in_install_list_not_installed ]]; then
         echo
-        echo $BOLD"All packages in install list are installed."$END
+        echo $ICON_CHECK$BOLD" All packages in install list are installed."$END
     else
         echo
-        echo $RED$BOLD"Some packages in install list are not installed: "$END${packages_in_install_list_not_installed[@]}
+        echo $ICON_WARN$YELLOW$BOLD" Some packages in install list are not installed: "$CYAN${packages_in_install_list_not_installed[@]}$END
     fi
 fi
 
 ### Cleanup Brew
 if [[ $cleanup_brew == y ]]; then
     echo
-    echo $LINE_SEPARATOR
+    echo $BOLD_SEPARATOR
     echo
-    echo $GREEN$BOLD$UNDERLINE"Cleaning up Brew..."$END
+    echo $GREEN$BOLD"Cleaning up Brew..."$END
     echo
-    echo $BOLD"\t> running "$PURPLE"brew autoremove"$END
+    echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew autoremove"$END
     brew autoremove
     echo
-    echo $BOLD"\t> running "$PURPLE"brew cleanup --prune=all -s"$END
+    echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew cleanup --prune=all -s"$END
     brew cleanup --prune=all -s
 fi
 
@@ -523,11 +539,16 @@ if [[ ${#casks_installed[@]} -gt 0 ||
     ${#casks_upgraded[@]} -gt 0 ||
     ${#packages_upgraded[@]} -gt 0 ]]; then
     echo
-    echo $LINE_SEPARATOR
+    echo $BOLD_SEPARATOR
     echo
-    echo $GREEN$BOLD$UNDERLINE"Installed/uninstalled/upgraded casks or packages:"$END
+    echo $BOLD"Installed/uninstalled/upgraded casks or packages:"$END
     echo
     echo $BOLD"Scroll up & read console output since there might be post-install/uninstall/upgrade steps printed to stdout."$END
 fi
+
+echo
+echo $BOLD_SEPARATOR
+echo
+echo $ICON_CHECK$BOLD" Done!"$END
 
 exit 0
