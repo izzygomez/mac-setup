@@ -30,7 +30,8 @@ Afterwards, simply run:
 
 This repo uses [`pre-commit`](https://pre-commit.com/) to automatically format & lint files before they are committed, & also as part of the required checks before a PR can be merged via [pre-commit.ci](https://pre-commit.ci/). See `.pre-commit-config.yaml` for configuration details.
 
-## TODOs
+<details>
+<summary><h2>TODOs</h2></summary>
 
 - Consider creating script that compares list of casks to install in `brew-installs.sh` to list of applications in `/Applications` & outputs diff to console output. Use case here is to very quickly check what apps are managed via brew, & which aren't (can create some sort of "ignore" list to not print out obviously non-brew apps, e.g. "App Store", "Calculator", "Messages"), which might be useful when bootstrapping new machine.
 - Revisit the need for `first-time.sh`. Specifically, seems like a convoluted use-case given that `brew-installs.sh` is something that is continually updated & re-ran as packages are added.
@@ -40,3 +41,4 @@ This repo uses [`pre-commit`](https://pre-commit.com/) to automatically format &
 - Consider adding `pip` installs into this directory.
 - Automate the creation of `~/iCloudDrive` symlink: `ln -s ~/Library/Mobile\ Documents/com\~apple\~CloudDocs ~/iCloudDrive`
 - Consider adding `shellcheck` linter to `.pre-commit-config.yaml`, [see here](https://github.com/izzygomez/strava/blob/ce24dd98ce0807816d33c858506f2c87e8a6bb0e/.pre-commit-config.yaml#L52-L56) for an example.
+</details>
