@@ -56,8 +56,10 @@ if [ -f "$(dirname "$0")/local/local-casks.sh" ]; then
     source "$(dirname "$0")/local/local-casks.sh"
     # Add local casks to the main array
     if [ -n "${local_casks_to_install[*]}" ]; then
-        echo "Adding local casks: ${local_casks_to_install[*]}"
         casks_to_install+=("${local_casks_to_install[@]}")
+        echo $ICON_CHECK$BOLD" Added local casks: "$END$DIM${local_casks_to_install[*]}$END
+    else
+        echo $ICON_ERROR$BOLD$RED" \`local_casks_to_install\` is empty or not set"$END
     fi
 fi
 
@@ -69,11 +71,13 @@ if [ -f "$(dirname "$0")/local/local-exclude-casks.sh" ]; then
 
     # Filter out excluded casks using array operations
     if [ -n "${local_exclude_casks[*]}" ]; then
-        echo "Excluding local casks: ${local_exclude_casks[*]}"
         for exclude_cask in "${local_exclude_casks[@]}"; do
             casks_to_install=("${casks_to_install[@]/$exclude_cask/}")
         done
         # Remove empty elements from the array
         casks_to_install=("${casks_to_install[@]/#/}")
+        echo $ICON_CHECK$BOLD" Excluded local casks: "$END$DIM${local_exclude_casks[*]}$END
+    else
+        echo $ICON_ERROR$BOLD$RED" \`local_exclude_casks\` is empty or not set"$END
     fi
 fi

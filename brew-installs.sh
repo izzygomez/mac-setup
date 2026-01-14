@@ -54,11 +54,11 @@ source ./utils/style.sh
 
 ### Check that Brew is installed
 if ! command -v brew &>/dev/null; then
-    echo $ICON_ERROR$RED" Brew is not installed, see https://brew.sh/"$END
+    echo $ICON_ERROR$BOLD$RED" Brew is not installed, see https://brew.sh/"$END
     exit 1
 fi
 
-echo $GREEN'
+echo $GREEN$BOLD'
              ___   ___   ____  _
             | |_) | |_) | |_  \ \    /
             |_|_) |_| \ |_|__  \_\/\/
@@ -73,14 +73,14 @@ echo "install new casks & packages, check installed casks &"
 echo "packages lists, & cleanup Brew."$END
 echo
 echo "Select an action to perform (default = 1):"$BOLD
-echo $GREEN"1)"$END" Do everything"
-echo $GREEN"2)"$END" Update Brew"
-echo $GREEN"3)"$END" Upgrade all casks & packages"
-echo $GREEN"4)"$END" Uninstall locally-excluded casks & packages"
-echo $GREEN"5)"$END" Install casks & packages"
-echo $GREEN"6)"$END" Check installed casks & packages"
-echo $GREEN"7)"$END" Cleanup Brew"
-echo $GREEN"0)"$END" Exit"
+echo $GREEN"1)"$END$BOLD" Do everything"$END
+echo $GREEN"2)"$END$BOLD" Update Brew"$END
+echo $GREEN"3)"$END$BOLD" Upgrade all casks & packages"$END
+echo $GREEN"4)"$END$BOLD" Uninstall locally-excluded casks & packages"$END
+echo $GREEN"5)"$END$BOLD" Install casks & packages"$END
+echo $GREEN"6)"$END$BOLD" Check installed casks & packages"$END
+echo $GREEN"7)"$END$BOLD" Cleanup Brew"$END
+echo $GREEN"0)"$END$BOLD" Exit"$END
 echo
 echo -n "Enter your choice: "$END
 
@@ -130,7 +130,7 @@ case $choice in
     ;;
 *)
     echo
-    echo $ICON_ERROR$RED" Invalid choice. Exiting."$END
+    echo $ICON_ERROR$BOLD$RED" Invalid choice. Exiting."$END
     exit 1
     ;;
 esac
@@ -225,6 +225,8 @@ if [[ $upgrade_casks == y ]]; then
         echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew upgrade --cask ${outdated_casks[*]}"$END
         if brew upgrade --cask "${outdated_casks[@]}"; then
             casks_upgraded=(${outdated_casks[@]})
+        else
+            echo $ICON_ERROR$BOLD$RED"Failed to upgrade casks: "${outdated_casks[*]}$END
         fi
     fi
 fi
@@ -255,6 +257,8 @@ if [[ $upgrade_packages == y ]]; then
         echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew upgrade --formula ${outdated_packages[*]}"$END
         if brew upgrade --formula "${outdated_packages[@]}"; then
             packages_upgraded=(${outdated_packages[@]})
+        else
+            echo $ICON_ERROR$BOLD$RED"Failed to upgrade packages: "${outdated_packages[*]}$END
         fi
     fi
 fi
@@ -541,9 +545,7 @@ if [[ ${#casks_installed[@]} -gt 0 ||
     echo
     echo $BOLD_SEPARATOR
     echo
-    echo $BOLD"Installed/uninstalled/upgraded casks or packages:"$END
-    echo
-    echo $BOLD"Scroll up & read console output since there might be post-install/uninstall/upgrade steps printed to stdout."$END
+    echo $BOLD"Installed/uninstalled/upgraded casks or packages: "$END"Scroll up & read console output since there might be post-install/uninstall/upgrade steps printed to stdout."
 fi
 
 echo
