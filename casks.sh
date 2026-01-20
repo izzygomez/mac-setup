@@ -80,3 +80,6 @@ if [ -f "$(dirname "$0")/local/local-exclude-casks.sh" ]; then
         echo $ICON_ERROR$BOLD$RED" \`local_exclude_casks\` is empty or not set"$END
     fi
 fi
+
+echo
+echo $BOLD"Final cask list: "$END$DIM${casks_to_install[*]}$END
