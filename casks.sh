@@ -34,7 +34,6 @@ casks_to_install=(
     'slack'
     'sonos'
     'spotify'
-    'stats'
     'steam'
     'telegram'
     'tor-browser'
