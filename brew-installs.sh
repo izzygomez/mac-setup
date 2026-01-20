@@ -344,8 +344,6 @@ if [[ $uninstall_excluded == y ]]; then
 fi
 
 ### Install casks & packages
-# TODO document these sections some more, e.g. still need to figure out how
-# to download python/ruby/etc & install correctly/not-manually
 casks_already_installed=()
 casks_to_be_installed=()
 casks_installed=()
