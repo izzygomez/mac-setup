@@ -87,3 +87,6 @@ if [ -f "$(dirname "$0")/local/local-exclude-packages.sh" ]; then
         echo $ICON_ERROR$BOLD$RED" \`local_exclude_packages\` is empty or not set"$END
     fi
 fi
+
+echo
+echo $BOLD"Final package list: "$END$DIM${packages_to_install[*]}$END
