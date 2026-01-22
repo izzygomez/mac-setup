@@ -44,7 +44,7 @@ casks_to_install=(
     'visual-studio-code'
     'vlc'
     'vnc-viewer'
-    'yubico-yubikey-manager'
+    'yubico-authenticator' # replaced now-deprecated 'yubico-yubikey-manager'
     'zoom'
 )
 
