@@ -459,7 +459,7 @@ if [[ $check_casks == y ]]; then
     else
         echo
         echo $ICON_WARN$YELLOW$BOLD" Some casks have been installed locally that are not reflected in install list."$END
-        echo $YELLOW$BOLD"Consider adding to install list or uninstalling locally (brew uninstall --cask \$cask): "$CYAN${installed_casks_not_in_install_list[@]}$END
+        echo $YELLOW$BOLD"Consider adding to 'casks.sh' or uninstalling locally: "$CYAN"brew uninstall --cask "${installed_casks_not_in_install_list[@]}$END
     fi
 
     # Check for casks in install list that are not installed
@@ -498,7 +498,7 @@ if [[ $check_packages == y ]]; then
     else
         echo
         echo $ICON_WARN$YELLOW$BOLD" Some packages have been installed locally that are not reflected in install list."$END
-        echo $YELLOW$BOLD"Consider adding to install list or uninstalling locally (brew uninstall \$package): "$CYAN${installed_packages_not_in_install_list[@]}$END
+        echo $YELLOW$BOLD"Consider adding to 'packages.sh' or uninstalling locally: "$CYAN"brew uninstall "${installed_packages_not_in_install_list[@]}$END
     fi
 
     # Check for packages in install list that are not installed
