@@ -1,30 +1,14 @@
 # macOS Setup Scripts
 
-Scripts for setting up & maintaining a consistent macOS environment with desired apps & packages.
+Scripts for setting up & maintaining a consistent macOS environment.
 
 ## Overview
 
-- `brew-installs.sh`: Script to install casks & packages from [Brew](https://brew.sh/). Designed to be run many times as things are added or removed. Also does optional updating & cleanup tasks.
-- `casks.sh` & `packages.sh`: lists of Brew casks & packages to install via `brew-installs.sh`.
-  - `local/`: optional machine-specific overrides (see `local/README.md`).
-- `first-time.sh`: Script intended for initialization after `./brew-installs.sh` has been run once. Designed to only be run once.
-
-## Usage
-
-This script assumes that [Brew](https://brew.sh/) is installed — install via curl command at website.
-
-When using for first time, run:
-
-```shell
-./brew-installs.sh
-./first-time.sh
-```
-
-Afterwards, simply run:
-
-```shell
-./brew-installs.sh
-```
+- `brew-installs.sh`: Script to install casks & packages from [Brew](https://brew.sh/). Idempotent, & designed to be run continuously as underlying install lists are updated. Also does optional updating & cleanup tasks.
+  - `casks.sh` & `packages.sh`: lists of Brew casks & packages to install.
+- `update-symlinks.sh`: Script to create symlinks in `~/.local/bin` for scripts you want accessible from anywhere. Idempotent & safe to run multiple times. Also cleans up dangling symlinks.
+- `local/`: machine-specific overrides (see `local/README.md`).
+- ~~`first-time.sh`: Script intended for initialization after `./brew-installs.sh` has been run once. Designed to only be run once.~~
 
 ## Pre-commit
 
