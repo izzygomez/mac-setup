@@ -1,6 +1,7 @@
 #!/bin/zsh
 
-source ./utils/style.sh
+MAC_SETUP_DIR="${0:A:h}"
+source "$MAC_SETUP_DIR/utils/style.sh"
 
 casks_to_install=(
     'alfred'
@@ -49,10 +50,10 @@ casks_to_install=(
 )
 
 # Source local-specific casks if the file exists
-if [ -f "$(dirname "$0")/local/local-casks.sh" ]; then
+if [ -f "$MAC_SETUP_DIR/local/local-casks.sh" ]; then
     echo
     echo $BOLD"Loading local casks..."$END
-    source "$(dirname "$0")/local/local-casks.sh"
+    source "$MAC_SETUP_DIR/local/local-casks.sh"
     # Add local casks to the main array
     if [ -n "${local_casks_to_install[*]}" ]; then
         casks_to_install+=("${local_casks_to_install[@]}")
@@ -63,10 +64,10 @@ if [ -f "$(dirname "$0")/local/local-casks.sh" ]; then
 fi
 
 # Source and process local-specific cask exclusions if the file exists
-if [ -f "$(dirname "$0")/local/local-exclude-casks.sh" ]; then
+if [ -f "$MAC_SETUP_DIR/local/local-exclude-casks.sh" ]; then
     echo
     echo $BOLD"Loading local cask exclusions..."$END
-    source "$(dirname "$0")/local/local-exclude-casks.sh"
+    source "$MAC_SETUP_DIR/local/local-exclude-casks.sh"
 
     # Filter out excluded casks using array operations
     if [ -n "${local_exclude_casks[*]}" ]; then
