@@ -1,6 +1,7 @@
-# Local configuration files
-local/*.sh
-!local/*.sh.example
+# Local configuration files; ignore everything except examples/ & README.md
+local/*
+!local/examples/
+!local/README.md
 
 # macOS stuff
 .DS_Store

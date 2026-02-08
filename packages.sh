@@ -1,6 +1,7 @@
 #!/bin/zsh
 
-source ./utils/style.sh
+MAC_SETUP_DIR="${0:A:h}"
+source "$MAC_SETUP_DIR/utils/style.sh"
 
 packages_to_install=(
     'bat'
@@ -57,10 +58,10 @@ packages_to_install=(
 )
 
 # Source local-specific packages if the file exists
-if [ -f "$(dirname "$0")/local/local-packages.sh" ]; then
+if [ -f "$MAC_SETUP_DIR/local/local-packages.sh" ]; then
     echo
     echo $BOLD"Loading local packages..."$END
-    source "$(dirname "$0")/local/local-packages.sh"
+    source "$MAC_SETUP_DIR/local/local-packages.sh"
     # Add local packages to the main array
     if [ -n "${local_packages_to_install[*]}" ]; then
         packages_to_install+=("${local_packages_to_install[@]}")
@@ -71,10 +72,10 @@ if [ -f "$(dirname "$0")/local/local-packages.sh" ]; then
 fi
 
 # Source and process local-specific package exclusions if the file exists
-if [ -f "$(dirname "$0")/local/local-exclude-packages.sh" ]; then
+if [ -f "$MAC_SETUP_DIR/local/local-exclude-packages.sh" ]; then
     echo
     echo $BOLD"Loading local package exclusions..."$END
-    source "$(dirname "$0")/local/local-exclude-packages.sh"
+    source "$MAC_SETUP_DIR/local/local-exclude-packages.sh"
 
     # Filter out excluded packages using array operations
     if [ -n "${local_exclude_packages[*]}" ]; then

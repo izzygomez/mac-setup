@@ -50,7 +50,9 @@
 #
 ################################################################################
 
-source ./utils/style.sh
+# Resolve the mac-setup repo directory (even when invoked via symlink)
+MAC_SETUP_DIR="${0:A:h}"
+source "$MAC_SETUP_DIR/utils/style.sh"
 
 ### Check that Brew is installed
 if ! command -v brew &>/dev/null; then
@@ -162,8 +164,8 @@ fi
 ### Import casks & packages
 echo
 echo $BOLD"First, importing cask & package lists..."$END
-source ./casks.sh
-source ./packages.sh
+source "$MAC_SETUP_DIR/casks.sh"
+source "$MAC_SETUP_DIR/packages.sh"
 
 ### Update Brew
 if [[ $update_brew == y ]]; then
@@ -273,8 +275,8 @@ if [[ $uninstall_excluded == y ]]; then
     echo $GREEN$BOLD"Uninstalling locally-excluded casks & packages..."$END
 
     # Handle excluded casks
-    if [ -f "./local/local-exclude-casks.sh" ]; then
-        source ./local/local-exclude-casks.sh
+    if [ -f "$MAC_SETUP_DIR/local/local-exclude-casks.sh" ]; then
+        source "$MAC_SETUP_DIR/local/local-exclude-casks.sh"
         if [ -n "${local_exclude_casks[*]}" ]; then
             echo
             echo $BOLD"Checking locally-excluded casks..."$END
@@ -288,8 +290,8 @@ if [[ $uninstall_excluded == y ]]; then
     fi
 
     # Handle excluded packages
-    if [ -f "./local/local-exclude-packages.sh" ]; then
-        source ./local/local-exclude-packages.sh
+    if [ -f "$MAC_SETUP_DIR/local/local-exclude-packages.sh" ]; then
+        source "$MAC_SETUP_DIR/local/local-exclude-packages.sh"
         if [ -n "${local_exclude_packages[*]}" ]; then
             echo
             echo $BOLD"Checking locally-excluded packages..."$END
