@@ -36,3 +36,9 @@ repos:
     hooks:
       - id: shfmt
         args: [-w, -s, -i, "4"]
+
+  # Prettier for formatting
+  - repo: https://github.com/rbubley/mirrors-prettier
+    rev: "v3.8.1"
+    hooks:
+      - id: prettier
