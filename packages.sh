@@ -11,7 +11,8 @@ packages_to_install=(
     'ffmpeg'
     'gh'
     'git'
-    'git-delta' # nice tool for better git diffs
+    'git-delta'       # nice tool for better git diffs
+    'git-filter-repo' # added when creating https://github.com/izzygomez/gists/
     'gnupg'
     'go'
     'grep'
