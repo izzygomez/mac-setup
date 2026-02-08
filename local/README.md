@@ -2,7 +2,7 @@
 
 This directory contains machine-specific configuration files that are ignored by `.gitignore`, except for `examples/` & this `README.md`.
 
-## Brew Overrides
+## Brew overrides
 
 The following are example configuration files to specify additional packages, casks, & exclusions that are specific to a local environment. This might be useful, for example, for work machines that might have additional packages, casks, or exclusions, but that shouldn't be installed on personal machines nor be publicly shared.
 
