@@ -14,6 +14,7 @@ packages_to_install=(
     'git'
     'git-delta'       # nice tool for better git diffs
     'git-filter-repo' # added when creating https://github.com/izzygomez/gists/
+    'git-crypt'       # added as part of https://github.com/izzygomez/dotfiles/pull/58
     'gnupg'
     'go'
     'grep'
