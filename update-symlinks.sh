@@ -84,8 +84,8 @@ fi
 symlinks=(
     "$PERSONAL_CODE_DIR/dotfiles/install-dotfiles.sh"
     "$PERSONAL_CODE_DIR/gists/utils/check-repos.sh"
-    "$PERSONAL_CODE_DIR/mac-setup/update-symlinks.sh"
     "$PERSONAL_CODE_DIR/mac-setup/brew-installs.sh"
+    "$PERSONAL_CODE_DIR/mac-setup/update-symlinks.sh"
     "$PERSONAL_CODE_DIR/strava/strava-sync.sh"
 )
 
