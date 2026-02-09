@@ -28,4 +28,4 @@ The following are example configuration files to specify additional packages, ca
 
 ## Symlinks Configuration
 
-The `symlinks-config.sh` file stores the path to your personal code directory. This is **auto-generated** on the first run of `update-symlinks.sh` — you will be prompted to enter the directory path. To change it, edit or delete the file & re-run `update-symlinks.sh`.
+The `symlinks-config.sh` file stores the path to your personal code directory. This is **auto-generated** on the first run of `install-symlinks.sh` — you will be prompted to enter the directory path. To change it, edit or delete the file & re-run `install-symlinks.sh`.
