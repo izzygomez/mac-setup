@@ -1,5 +1,7 @@
 # macOS Setup Scripts
 
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
+
 Scripts for setting up & maintaining a consistent macOS environment.
 
 ## Overview
@@ -9,10 +11,6 @@ Scripts for setting up & maintaining a consistent macOS environment.
 - `install-symlinks.sh`: Script to create symlinks in `~/.local/bin` for scripts you want accessible from anywhere. Idempotent & safe to run multiple times. Also cleans up dangling symlinks.
 - `local/`: machine-specific overrides (see `local/README.md`).
 - ~~`first-time.sh`: Script intended for initialization after `./brew-installs.sh` has been run once. Designed to only be run once.~~
-
-## Pre-commit
-
-This repo uses [`pre-commit`](https://pre-commit.com/) to automatically format & lint files before they are committed, & also as part of the required checks before a PR can be merged via [pre-commit.ci](https://pre-commit.ci/). See `.pre-commit-config.yaml` for configuration details.
 
 <details>
 <summary><h2>TODOs</h2></summary>
