@@ -16,6 +16,7 @@ casks_to_install=(
     'docker-desktop'
     'firefox'
     'flux-app'
+    'font-hack-nerd-font'
     'github'
     'google-chrome'
     'google-drive'
