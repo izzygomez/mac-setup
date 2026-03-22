@@ -7,6 +7,7 @@ packages_to_install=(
     'bat'
     'chruby' # from https://jekyllrb.com/docs/installation/macos/
     'emacs'
+    'exiftool' # tool to read/write metadata in files
     'eza'
     'fastfetch' # finally found out the the thing all of r/unixporn uses (used to use `neofetch`)
     'ffmpeg'
