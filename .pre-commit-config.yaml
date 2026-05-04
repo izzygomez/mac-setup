@@ -37,13 +37,13 @@ repos:
 
   # Shell script formatting
   - repo: https://github.com/scop/pre-commit-shfmt
-    rev: v3.13.0-1
+    rev: v3.13.1-1
     hooks:
       - id: shfmt
         args: [-w, -s, -i, "4"]
 
   # Prettier for formatting
   - repo: https://github.com/rbubley/mirrors-prettier
-    rev: "v3.8.1"
+    rev: "v3.8.3"
     hooks:
       - id: prettier
