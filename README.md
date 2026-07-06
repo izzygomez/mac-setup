@@ -23,4 +23,5 @@ Scripts for setting up & maintaining a consistent macOS environment.
 - Consider adding `pip` installs into this directory.
 - Automate the creation of `~/iCloudDrive` symlink: `ln -s ~/Library/Mobile\ Documents/com\~apple\~CloudDocs ~/iCloudDrive`
 - Consider adding `shellcheck` linter to `.pre-commit-config.yaml`, [see here](https://github.com/izzygomez/strava/blob/ce24dd98ce0807816d33c858506f2c87e8a6bb0e/.pre-commit-config.yaml#L52-L56) for an example.
+
 </details>
