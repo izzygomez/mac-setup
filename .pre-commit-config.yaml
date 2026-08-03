@@ -44,6 +44,6 @@ repos:
 
   # Prettier for formatting
   - repo: https://github.com/rbubley/mirrors-prettier
-    rev: "v3.9.4"
+    rev: "v3.9.6"
     hooks:
       - id: prettier
