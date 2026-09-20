@@ -143,6 +143,15 @@ echo $BOLD"First, importing cask & package lists..."$END
 source "$MAC_SETUP_DIR/casks.sh"
 source "$MAC_SETUP_DIR/packages.sh"
 
+### Trust third-party taps
+# Homebrew won't load formulae from non-official taps until they're trusted (see
+# https://docs.brew.sh/Tap-Trust). Trusting is idempotent & works even before the
+# tap exists, so this just runs every time. Add a line here if `packages.sh` or
+# `casks.sh` ever gains another tap-qualified entry.
+echo
+echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew trust --formula withgraphite/tap/graphite"$END
+brew trust --formula withgraphite/tap/graphite
+
 ### Update Brew
 if [[ $update_brew == y ]]; then
     echo
