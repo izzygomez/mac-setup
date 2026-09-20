@@ -137,30 +137,6 @@ case $choice in
     ;;
 esac
 
-### Check if HOMEBREW_ASK is set
-# If install or upgrade operations are selected but HOMEBREW_ASK is not set,
-# warn the user that commands will run without confirmation prompts.
-if [[ $install_casks == y || $install_packages == y || $upgrade_casks == y || $upgrade_packages == y ]]; then
-    if [[ $HOMEBREW_ASK != 1 ]]; then
-        echo
-        echo $ICON_WARN$YELLOW$BOLD" Warning: HOMEBREW_ASK is not set."$END
-        echo $BOLD"Install & upgrade commands will run without asking for confirmation."$END
-        echo
-        echo -n "Continue anyway? [y/N]: "
-        read -s -k 1 confirm
-        # If Enter is pressed, `confirm` is a newline/empty string, so we default to "N".
-        if [[ -z $confirm || $confirm == $'\n' ]]; then
-            confirm="N"
-        fi
-        echo $confirm
-        if [[ ! $confirm =~ ^[Yy]$ ]]; then
-            echo
-            echo $BOLD"Exiting. Set HOMEBREW_ASK=1 before running this script if you want confirmation prompts."$END
-            exit 0
-        fi
-    fi
-fi
-
 ### Import casks & packages
 echo
 echo $BOLD"First, importing cask & package lists..."$END
@@ -180,18 +156,10 @@ if [[ $update_brew == y ]]; then
 fi
 
 ### Upgrade all casks & packages
-# Note on HOMEBREW_ASK behavior (as of Jan 2026):
-# The docs say HOMEBREW_ASK only affects formula commands, but it actually works
-# for cask upgrades IF you pass cask names: `brew upgrade --cask a b c`.
-# However, `brew upgrade --cask` (no args) or `brew upgrade --cask --ask` does
-# NOT prompt for confirmation — it just runs. This seems like a bug.
-#
-# To work around this, we capture the outdated casks list first & pass them
-# explicitly. This gives us the HOMEBREW_ASK confirmation w/o a manual prompt.
-#
-# If brew fixes this in the future & `brew upgrade --cask` respects HOMEBREW_ASK
-# on its own, we can simplify this to just run `brew upgrade --cask` directly
-# (similar to how the packages section works below).
+# We invoke `brew upgrade --cask` / `brew upgrade --formula` with no explicit
+# names so brew's own ask-mode prompt fires (passing explicit names causes brew
+# to skip the confirmation prompt). We track what actually upgraded by diffing
+# the outdated list before & after, which feeds the post-operation summary.
 casks_upgraded=()
 packages_upgraded=()
 if [[ $upgrade_casks == y || $upgrade_packages == y ]]; then
@@ -208,27 +176,34 @@ if [[ $upgrade_casks == y ]]; then
     echo $BOLD"Listing casks in need of upgrading..."$END
     echo
     echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew outdated --cask"$END
-    outdated_output=$(brew outdated --cask)
+    outdated_before=$(brew outdated --cask)
 
-    if [[ -z $outdated_output ]]; then
+    if [[ -z $outdated_before ]]; then
         echo
         echo $ICON_CHECK$BOLD" No outdated casks to upgrade."$END
     else
-        echo "$outdated_output"
+        echo "$outdated_before"
         echo
         echo $BOLD"Upgrading outdated casks..."$END
         echo
-        # Convert newline-separated string to array for proper argument passing.
-        # We need an array so each cask becomes a separate argument to brew.
-        outdated_casks=()
-        while read -r cask; do        # read one line at a time into $cask
-            outdated_casks+=("$cask") # append $cask to array
-        done <<<"$outdated_output"    # feed $outdated_output as stdin to while loop
-        echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew upgrade --cask ${outdated_casks[*]}"$END
-        if brew upgrade --cask "${outdated_casks[@]}"; then
-            casks_upgraded=(${outdated_casks[@]})
+        echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew upgrade --cask"$END
+        brew upgrade --cask
+
+        # brew exits non-zero both when the prompt is declined & on a genuine
+        # failure, so determine what happened by diffing the outdated list
+        # before & after rather than by checking the exit code.
+        outdated_after=$(brew outdated --cask)
+        while read -r cask; do
+            if ! grep -Fxq "$cask" <<<"$outdated_after"; then
+                casks_upgraded+=("$cask")
+            fi
+        done <<<"$outdated_before"
+
+        echo
+        if [[ ${#casks_upgraded[@]} -eq 0 ]]; then
+            echo $ICON_WARN$YELLOW$BOLD" No casks were upgraded."$END
         else
-            echo $ICON_ERROR$BOLD$RED"Failed to upgrade casks: "${outdated_casks[*]}$END
+            echo $ICON_CHECK$BOLD" Upgraded casks: "$CYAN${casks_upgraded[*]}$END
         fi
     fi
 fi
@@ -240,27 +215,34 @@ if [[ $upgrade_packages == y ]]; then
     echo $BOLD"Listing packages in need of upgrading..."$END
     echo
     echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew outdated --formula"$END
-    outdated_output=$(brew outdated --formula)
+    outdated_before=$(brew outdated --formula)
 
-    if [[ -z $outdated_output ]]; then
+    if [[ -z $outdated_before ]]; then
         echo
         echo $ICON_CHECK$BOLD" No outdated packages to upgrade."$END
     else
-        echo "$outdated_output"
+        echo "$outdated_before"
         echo
         echo $BOLD"Upgrading outdated packages..."$END
         echo
-        # Convert newline-separated string to array for proper argument passing.
-        # We need an array so each package becomes a separate argument to brew.
-        outdated_packages=()
-        while read -r pkg; do           # read one line at a time into $pkg
-            outdated_packages+=("$pkg") # append $pkg to array
-        done <<<"$outdated_output"      # feed $outdated_output as stdin to while loop
-        echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew upgrade --formula ${outdated_packages[*]}"$END
-        if brew upgrade --formula "${outdated_packages[@]}"; then
-            packages_upgraded=(${outdated_packages[@]})
+        echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew upgrade --formula"$END
+        brew upgrade --formula
+
+        # brew exits non-zero both when the prompt is declined & on a genuine
+        # failure, so determine what happened by diffing the outdated list
+        # before & after rather than by checking the exit code.
+        outdated_after=$(brew outdated --formula)
+        while read -r pkg; do
+            if ! grep -Fxq "$pkg" <<<"$outdated_after"; then
+                packages_upgraded+=("$pkg")
+            fi
+        done <<<"$outdated_before"
+
+        echo
+        if [[ ${#packages_upgraded[@]} -eq 0 ]]; then
+            echo $ICON_WARN$YELLOW$BOLD" No packages were upgraded."$END
         else
-            echo $ICON_ERROR$BOLD$RED"Failed to upgrade packages: "${outdated_packages[*]}$END
+            echo $ICON_CHECK$BOLD" Upgraded packages: "$CYAN${packages_upgraded[*]}$END
         fi
     fi
 fi
