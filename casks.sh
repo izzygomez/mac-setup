@@ -72,11 +72,7 @@ if [ -f "$MAC_SETUP_DIR/local/local-exclude-casks.sh" ]; then
 
     # Filter out excluded casks using array operations
     if [ -n "${local_exclude_casks[*]}" ]; then
-        for exclude_cask in "${local_exclude_casks[@]}"; do
-            casks_to_install=("${casks_to_install[@]/$exclude_cask/}")
-        done
-        # Remove empty elements from the array
-        casks_to_install=("${casks_to_install[@]/#/}")
+        casks_to_install=(${casks_to_install:|local_exclude_casks})
         echo $ICON_CHECK$BOLD" Excluded local casks: "$END$DIM${local_exclude_casks[*]}$END
     else
         echo $ICON_ERROR$BOLD$RED" \`local_exclude_casks\` is empty or not set"$END
