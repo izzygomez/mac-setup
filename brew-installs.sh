@@ -479,15 +479,49 @@ if [[ $check_casks == y ]]; then
     echo
     echo $BOLD"Checking Brew casks..."$END
 
-    brew_list_cask=($(brew list --cask))
+    # --full-name lists canonical names only, omitting the aliases brew keeps
+    # after an upstream rename
+    brew_list_cask=($(brew list --cask --full-name))
 
-    # Check for installed casks not in install list
+    # Check for installed casks not in install list.
+    # ${arr[(Ie)x]} is the index of x in arr, or 0 when absent — an exact match
     installed_casks_not_in_install_list=()
     for c in ${brew_list_cask[@]}; do
-        if [[ ! ${casks_to_install[@]} =~ $c ]]; then
+        if [[ ${casks_to_install[(Ie)$c]} -eq 0 ]]; then
             installed_casks_not_in_install_list+=($c)
         fi
     done
+
+    # Check for casks in install list that are not installed
+    casks_in_install_list_not_installed=()
+    for c in ${casks_to_install[@]}; do
+        if [[ ${brew_list_cask[(Ie)$c]} -eq 0 ]]; then
+            casks_in_install_list_not_installed+=($c)
+        fi
+    done
+
+    # An upstream rename lands in both lists at once — the old name as missing,
+    # the new one as unexpected — and both suggested fixes would be wrong. Ask
+    # brew what each missing name resolves to & pair them into one rename.
+    renamed_casks=()
+    if [[ -n $casks_in_install_list_not_installed ]] && command -v jq &>/dev/null; then
+        for c in ${casks_in_install_list_not_installed[@]}; do
+            new_name=$(brew info --cask --json=v2 $c 2>/dev/null | jq -r '.casks[0].full_token // empty' 2>/dev/null)
+            if [[ -n $new_name && $new_name != $c &&
+                ${installed_casks_not_in_install_list[(Ie)$new_name]} -gt 0 ]]; then
+                renamed_casks+=("$c -> $new_name")
+                casks_in_install_list_not_installed=(${casks_in_install_list_not_installed:#$c})
+                installed_casks_not_in_install_list=(${installed_casks_not_in_install_list:#$new_name})
+            fi
+        done
+    fi
+
+    if [[ -n $renamed_casks ]]; then
+        echo
+        echo $ICON_WARN$YELLOW$BOLD" Some casks were renamed upstream: "$CYAN${renamed_casks[*]}$END
+        echo $YELLOW$BOLD"Update 'casks.sh' to the new name(s)."$END
+    fi
+
     if [[ -z $installed_casks_not_in_install_list ]]; then
         echo
         echo $ICON_CHECK$BOLD" All installed casks are in install list."$END
@@ -497,13 +531,6 @@ if [[ $check_casks == y ]]; then
         echo $YELLOW$BOLD"Consider adding to 'casks.sh' or uninstalling locally: "$CYAN"brew uninstall --cask "${installed_casks_not_in_install_list[@]}$END
     fi
 
-    # Check for casks in install list that are not installed
-    casks_in_install_list_not_installed=()
-    for c in ${casks_to_install[@]}; do
-        if [[ ! ${brew_list_cask[@]} =~ $c ]]; then
-            casks_in_install_list_not_installed+=($c)
-        fi
-    done
     if [[ -z $casks_in_install_list_not_installed ]]; then
         echo
         echo $ICON_CHECK$BOLD" All casks in install list are installed."$END
@@ -521,12 +548,46 @@ if [[ $check_packages == y ]]; then
     brew_leaves=($(brew leaves --installed-on-request))
 
     # Check for installed packages not in install list
+    # Exact membership, as in the cask check above.
     installed_packages_not_in_install_list=()
     for p in ${brew_leaves[@]}; do
-        if [[ ! ${packages_to_install[@]} =~ $p ]]; then
+        if [[ ${packages_to_install[(Ie)$p]} -eq 0 ]]; then
             installed_packages_not_in_install_list+=($p)
         fi
     done
+
+    # Check for packages in install list that are not installed
+    # --full-name for the same reason as the cask check above.
+    brew_formula_list=($(brew list --formula --full-name))
+    # --full-name keeps the tap prefix, matching how `packages.sh` declares
+    # tap formulae, so these compare directly without stripping anything.
+    packages_in_install_list_not_installed=()
+    for p in ${packages_to_install[@]}; do
+        if [[ ${brew_formula_list[(Ie)$p]} -eq 0 ]]; then
+            packages_in_install_list_not_installed+=($p)
+        fi
+    done
+
+    # Pair up upstream renames, as in the cask check above.
+    renamed_packages=()
+    if [[ -n $packages_in_install_list_not_installed ]] && command -v jq &>/dev/null; then
+        for p in ${packages_in_install_list_not_installed[@]}; do
+            new_name=$(brew info --formula --json=v2 $p 2>/dev/null | jq -r '.formulae[0].full_name // empty' 2>/dev/null)
+            if [[ -n $new_name && $new_name != $p &&
+                ${installed_packages_not_in_install_list[(Ie)$new_name]} -gt 0 ]]; then
+                renamed_packages+=("$p -> $new_name")
+                packages_in_install_list_not_installed=(${packages_in_install_list_not_installed:#$p})
+                installed_packages_not_in_install_list=(${installed_packages_not_in_install_list:#$new_name})
+            fi
+        done
+    fi
+
+    if [[ -n $renamed_packages ]]; then
+        echo
+        echo $ICON_WARN$YELLOW$BOLD" Some packages were renamed upstream: "$CYAN${renamed_packages[*]}$END
+        echo $YELLOW$BOLD"Update 'packages.sh' to the new name(s)."$END
+    fi
+
     if [[ -z $installed_packages_not_in_install_list ]]; then
         echo
         echo $ICON_CHECK$BOLD" All installed packages are in install list."$END
@@ -536,14 +597,6 @@ if [[ $check_packages == y ]]; then
         echo $YELLOW$BOLD"Consider adding to 'packages.sh' or uninstalling locally: "$CYAN"brew uninstall "${installed_packages_not_in_install_list[@]}$END
     fi
 
-    # Check for packages in install list that are not installed
-    brew_formula_list=($(brew list --formula))
-    packages_in_install_list_not_installed=()
-    for p in ${packages_to_install[@]}; do
-        if [[ ! ${brew_formula_list[@]} =~ ${p##*/} ]]; then
-            packages_in_install_list_not_installed+=($p)
-        fi
-    done
     if [[ -z $packages_in_install_list_not_installed ]]; then
         echo
         echo $ICON_CHECK$BOLD" All packages in install list are installed."$END
