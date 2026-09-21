@@ -81,11 +81,7 @@ if [ -f "$MAC_SETUP_DIR/local/local-exclude-packages.sh" ]; then
 
     # Filter out excluded packages using array operations
     if [ -n "${local_exclude_packages[*]}" ]; then
-        for exclude_package in "${local_exclude_packages[@]}"; do
-            packages_to_install=("${packages_to_install[@]/$exclude_package/}")
-        done
-        # Remove empty elements from the array
-        packages_to_install=("${packages_to_install[@]/#/}")
+        packages_to_install=(${packages_to_install:|local_exclude_packages})
         echo $ICON_CHECK$BOLD" Excluded local packages: "$END$DIM${local_exclude_packages[*]}$END
     else
         echo $ICON_ERROR$BOLD$RED" \`local_exclude_packages\` is empty or not set"$END
