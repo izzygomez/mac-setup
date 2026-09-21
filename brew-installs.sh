@@ -192,12 +192,11 @@ if [[ $upgrade_casks == y ]]; then
         # brew exits non-zero both when the prompt is declined & on a genuine
         # failure, so determine what happened by diffing the outdated list
         # before & after rather than by checking the exit code.
+        # ${(f)x} splits x on newlines; ${a:|b} is "elements of a not in b".
         outdated_after=$(brew outdated --cask)
-        while read -r cask; do
-            if ! grep -Fxq "$cask" <<<"$outdated_after"; then
-                casks_upgraded+=("$cask")
-            fi
-        done <<<"$outdated_before"
+        before_list=(${(f)outdated_before})
+        after_list=(${(f)outdated_after})
+        casks_upgraded=(${before_list:|after_list})
 
         echo
         if [[ ${#casks_upgraded[@]} -eq 0 ]]; then
@@ -231,12 +230,11 @@ if [[ $upgrade_packages == y ]]; then
         # brew exits non-zero both when the prompt is declined & on a genuine
         # failure, so determine what happened by diffing the outdated list
         # before & after rather than by checking the exit code.
+        # ${(f)x} splits x on newlines; ${a:|b} is "elements of a not in b".
         outdated_after=$(brew outdated --formula)
-        while read -r pkg; do
-            if ! grep -Fxq "$pkg" <<<"$outdated_after"; then
-                packages_upgraded+=("$pkg")
-            fi
-        done <<<"$outdated_before"
+        before_list=(${(f)outdated_before})
+        after_list=(${(f)outdated_after})
+        packages_upgraded=(${before_list:|after_list})
 
         echo
         if [[ ${#packages_upgraded[@]} -eq 0 ]]; then
