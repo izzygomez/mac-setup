@@ -208,10 +208,15 @@ if [[ $upgrade_casks == y ]]; then
     echo
     echo $BOLD"Listing casks in need of upgrading..."$END
     echo
-    echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew outdated --cask"$END
-    outdated_before=$(brew outdated --cask)
+    echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew outdated --cask --quiet"$END
+    # --quiet keeps the output to just cask names.
+    outdated_before=$(brew outdated --cask --quiet)
+    outdated_status=$?
 
-    if [[ -z $outdated_before ]]; then
+    if [[ $outdated_status -ne 0 ]]; then
+        echo
+        echo $ICON_ERROR$BOLD$RED" \`brew outdated --cask\` failed; skipping cask upgrades."$END
+    elif [[ -z $outdated_before ]]; then
         echo
         echo $ICON_CHECK$BOLD" No outdated casks to upgrade."$END
     else
@@ -225,17 +230,22 @@ if [[ $upgrade_casks == y ]]; then
         # brew exits non-zero both when the prompt is declined & on a genuine
         # failure, so determine what happened by diffing the outdated list
         # before & after rather than by checking the exit code.
-        # ${(f)x} splits x on newlines; ${a:|b} is "elements of a not in b".
-        outdated_after=$(brew outdated --cask)
+        # ${(f)x} splits x on newlines; ${a:|b} is "elements of a not in b" &
+        # ${a:*b} is "elements of a also in b", i.e. what didn't upgrade.
+        outdated_after=$(brew outdated --cask --quiet)
         before_list=(${(f)outdated_before})
         after_list=(${(f)outdated_after})
         casks_upgraded=(${before_list:|after_list})
+        casks_not_upgraded=(${before_list:*after_list})
 
         echo
         if [[ ${#casks_upgraded[@]} -eq 0 ]]; then
             echo $ICON_WARN$YELLOW$BOLD" No casks were upgraded."$END
         else
             echo $ICON_CHECK$BOLD" Upgraded casks: "$CYAN${casks_upgraded[*]}$END
+            if [[ ${#casks_not_upgraded[@]} -gt 0 ]]; then
+                echo $ICON_WARN$YELLOW$BOLD" Still outdated: "$CYAN${casks_not_upgraded[*]}$END
+            fi
         fi
     fi
 fi
@@ -246,10 +256,15 @@ if [[ $upgrade_packages == y ]]; then
     echo
     echo $BOLD"Listing packages in need of upgrading..."$END
     echo
-    echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew outdated --formula"$END
-    outdated_before=$(brew outdated --formula)
+    echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew outdated --formula --quiet"$END
+    # --quiet keeps the output to just package names.
+    outdated_before=$(brew outdated --formula --quiet)
+    outdated_status=$?
 
-    if [[ -z $outdated_before ]]; then
+    if [[ $outdated_status -ne 0 ]]; then
+        echo
+        echo $ICON_ERROR$BOLD$RED" \`brew outdated --formula\` failed; skipping package upgrades."$END
+    elif [[ -z $outdated_before ]]; then
         echo
         echo $ICON_CHECK$BOLD" No outdated packages to upgrade."$END
     else
@@ -260,20 +275,20 @@ if [[ $upgrade_packages == y ]]; then
         echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew upgrade --formula"$END
         brew upgrade --formula
 
-        # brew exits non-zero both when the prompt is declined & on a genuine
-        # failure, so determine what happened by diffing the outdated list
-        # before & after rather than by checking the exit code.
-        # ${(f)x} splits x on newlines; ${a:|b} is "elements of a not in b".
-        outdated_after=$(brew outdated --formula)
+        outdated_after=$(brew outdated --formula --quiet)
         before_list=(${(f)outdated_before})
         after_list=(${(f)outdated_after})
         packages_upgraded=(${before_list:|after_list})
+        packages_not_upgraded=(${before_list:*after_list})
 
         echo
         if [[ ${#packages_upgraded[@]} -eq 0 ]]; then
             echo $ICON_WARN$YELLOW$BOLD" No packages were upgraded."$END
         else
             echo $ICON_CHECK$BOLD" Upgraded packages: "$CYAN${packages_upgraded[*]}$END
+            if [[ ${#packages_not_upgraded[@]} -gt 0 ]]; then
+                echo $ICON_WARN$YELLOW$BOLD" Still outdated: "$CYAN${packages_not_upgraded[*]}$END
+            fi
         fi
     fi
 fi
@@ -504,16 +519,21 @@ if [[ $check_casks == y ]]; then
     # the new one as unexpected — and both suggested fixes would be wrong. Ask
     # brew what each missing name resolves to & pair them into one rename.
     renamed_casks=()
-    if [[ -n $casks_in_install_list_not_installed ]] && command -v jq &>/dev/null; then
-        for c in ${casks_in_install_list_not_installed[@]}; do
-            new_name=$(brew info --cask --json=v2 $c 2>/dev/null | jq -r '.casks[0].full_token // empty' 2>/dev/null)
-            if [[ -n $new_name && $new_name != $c &&
-                ${installed_casks_not_in_install_list[(Ie)$new_name]} -gt 0 ]]; then
-                renamed_casks+=("$c -> $new_name")
-                casks_in_install_list_not_installed=(${casks_in_install_list_not_installed:#$c})
-                installed_casks_not_in_install_list=(${installed_casks_not_in_install_list:#$new_name})
-            fi
-        done
+    if [[ -n $casks_in_install_list_not_installed && -n $installed_casks_not_in_install_list ]]; then
+        if ! command -v jq &>/dev/null; then
+            echo
+            echo $ICON_WARN$YELLOW$BOLD" jq not found; skipping upstream-rename detection."$END
+        else
+            for c in ${casks_in_install_list_not_installed[@]}; do
+                new_name=$(brew info --cask --json=v2 $c 2>/dev/null | jq -r '.casks[0].full_token // empty' 2>/dev/null)
+                if [[ -n $new_name && $new_name != $c &&
+                    ${installed_casks_not_in_install_list[(Ie)$new_name]} -gt 0 ]]; then
+                    renamed_casks+=("$c -> $new_name")
+                    casks_in_install_list_not_installed=(${casks_in_install_list_not_installed:#$c})
+                    installed_casks_not_in_install_list=(${installed_casks_not_in_install_list:#$new_name})
+                fi
+            done
+        fi
     fi
 
     if [[ -n $renamed_casks ]]; then
@@ -570,16 +590,21 @@ if [[ $check_packages == y ]]; then
 
     # Pair up upstream renames, as in the cask check above.
     renamed_packages=()
-    if [[ -n $packages_in_install_list_not_installed ]] && command -v jq &>/dev/null; then
-        for p in ${packages_in_install_list_not_installed[@]}; do
-            new_name=$(brew info --formula --json=v2 $p 2>/dev/null | jq -r '.formulae[0].full_name // empty' 2>/dev/null)
-            if [[ -n $new_name && $new_name != $p &&
-                ${installed_packages_not_in_install_list[(Ie)$new_name]} -gt 0 ]]; then
-                renamed_packages+=("$p -> $new_name")
-                packages_in_install_list_not_installed=(${packages_in_install_list_not_installed:#$p})
-                installed_packages_not_in_install_list=(${installed_packages_not_in_install_list:#$new_name})
-            fi
-        done
+    if [[ -n $packages_in_install_list_not_installed && -n $installed_packages_not_in_install_list ]]; then
+        if ! command -v jq &>/dev/null; then
+            echo
+            echo $ICON_WARN$YELLOW$BOLD" jq not found; skipping upstream-rename detection."$END
+        else
+            for p in ${packages_in_install_list_not_installed[@]}; do
+                new_name=$(brew info --formula --json=v2 $p 2>/dev/null | jq -r '.formulae[0].full_name // empty' 2>/dev/null)
+                if [[ -n $new_name && $new_name != $p &&
+                    ${installed_packages_not_in_install_list[(Ie)$new_name]} -gt 0 ]]; then
+                    renamed_packages+=("$p -> $new_name")
+                    packages_in_install_list_not_installed=(${packages_in_install_list_not_installed:#$p})
+                    installed_packages_not_in_install_list=(${installed_packages_not_in_install_list:#$new_name})
+                fi
+            done
+        fi
     fi
 
     if [[ -n $renamed_packages ]]; then
