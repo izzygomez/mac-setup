@@ -69,6 +69,21 @@ if [[ ! -t 0 || ! -t 1 ]]; then
     exit 1
 fi
 
+### Confirmation prompt
+# Used to confirm some destructive brew operation that doesn't get its own
+# prompt from brew itself.
+# Echoes the keypress, defaults to no, & returns 0 only on y/Y.
+confirm() {
+    echo
+    echo -n $BOLD"$1 [y/N]: "$END
+    read -s -k 1 reply
+    if [[ -z $reply || $reply == $'\n' ]]; then
+        reply="N"
+    fi
+    echo $reply
+    [[ $reply == [Yy] ]]
+}
+
 echo $GREEN$BOLD'
              ___   ___   ____  _
             | |_) | |_) | |_  \ \    /
@@ -306,34 +321,44 @@ if [[ $uninstall_excluded == y ]]; then
     if [[ ${#excluded_casks_to_uninstall[@]} -gt 0 ]]; then
         echo
         echo $ICON_WARN$YELLOW$BOLD" Found locally-excluded casks that are currently installed: "$CYAN${excluded_casks_to_uninstall[*]}$END
-        echo
-        echo $BOLD"Uninstalling locally-excluded casks..."$END
-
-        for uninstall_cask in "${excluded_casks_to_uninstall[@]}"; do
+        if ! confirm "Uninstall these ${#excluded_casks_to_uninstall[@]} cask(s)?"; then
             echo
-            echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew uninstall --cask "$uninstall_cask$END
-            brew uninstall --cask $uninstall_cask
-        done
+            echo $ICON_WARN$YELLOW$BOLD" Skipping cask uninstallation."$END
+        else
+            echo
+            echo $BOLD"Uninstalling locally-excluded casks..."$END
 
-        echo
-        echo $ICON_CHECK$BOLD" Uninstalled locally-excluded casks: "$CYAN${excluded_casks_to_uninstall[*]}$END
+            for uninstall_cask in "${excluded_casks_to_uninstall[@]}"; do
+                echo
+                echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew uninstall --cask "$uninstall_cask$END
+                brew uninstall --cask $uninstall_cask
+            done
+
+            echo
+            echo $ICON_CHECK$BOLD" Uninstalled locally-excluded casks: "$CYAN${excluded_casks_to_uninstall[*]}$END
+        fi
     fi
 
     # Uninstall excluded packages
     if [[ ${#excluded_packages_to_uninstall[@]} -gt 0 ]]; then
         echo
         echo $ICON_WARN$YELLOW$BOLD" Found locally-excluded packages that are currently installed: "$CYAN${excluded_packages_to_uninstall[*]}$END
-        echo
-        echo $BOLD"Uninstalling locally-excluded packages..."$END
-
-        for uninstall_package in "${excluded_packages_to_uninstall[@]}"; do
+        if ! confirm "Uninstall these ${#excluded_packages_to_uninstall[@]} package(s)?"; then
             echo
-            echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew uninstall "$uninstall_package$END
-            brew uninstall $uninstall_package
-        done
+            echo $ICON_WARN$YELLOW$BOLD" Skipping package uninstallation."$END
+        else
+            echo
+            echo $BOLD"Uninstalling locally-excluded packages..."$END
 
-        echo
-        echo $ICON_CHECK$BOLD" Uninstalled locally-excluded packages: "$CYAN${excluded_packages_to_uninstall[*]}$END
+            for uninstall_package in "${excluded_packages_to_uninstall[@]}"; do
+                echo
+                echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew uninstall "$uninstall_package$END
+                brew uninstall $uninstall_package
+            done
+
+            echo
+            echo $ICON_CHECK$BOLD" Uninstalled locally-excluded packages: "$CYAN${excluded_packages_to_uninstall[*]}$END
+        fi
     fi
 
     # Summary message
@@ -381,14 +406,19 @@ if [[ $install_casks == y ]]; then
     else
         echo
         echo $BOLD"Casks to be installed: "$END$CYAN${casks_to_be_installed[*]}$END
-        echo
-        echo $BOLD"Installing Brew casks..."$END
-        echo
-        echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew install --cask "${casks_to_be_installed[*]}$END
-        if brew install --cask ${casks_to_be_installed[@]}; then
-            casks_installed=(${casks_to_be_installed[@]})
+        if ! confirm "Install these ${#casks_to_be_installed[@]} cask(s)?"; then
             echo
-            echo $ICON_CHECK$BOLD" Newly installed casks: "$CYAN${casks_installed[*]}$END
+            echo $ICON_WARN$YELLOW$BOLD" Skipping cask installation."$END
+        else
+            echo
+            echo $BOLD"Installing Brew casks..."$END
+            echo
+            echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew install --cask "${casks_to_be_installed[*]}$END
+            if brew install --cask ${casks_to_be_installed[@]}; then
+                casks_installed=(${casks_to_be_installed[@]})
+                echo
+                echo $ICON_CHECK$BOLD" Newly installed casks: "$CYAN${casks_installed[*]}$END
+            fi
         fi
     fi
 fi
@@ -418,14 +448,19 @@ if [[ $install_packages == y ]]; then
     else
         echo
         echo $BOLD"Packages to be installed: "$END$CYAN${packages_to_be_installed[*]}$END
-        echo
-        echo $BOLD"Installing Brew packages..."$END
-        echo
-        echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew install "${packages_to_be_installed[*]}$END
-        if brew install ${packages_to_be_installed[@]}; then
-            packages_installed=(${packages_to_be_installed[@]})
+        if ! confirm "Install these ${#packages_to_be_installed[@]} package(s)?"; then
             echo
-            echo $ICON_CHECK$BOLD" Newly installed packages: "$CYAN${packages_installed[*]}$END
+            echo $ICON_WARN$YELLOW$BOLD" Skipping package installation."$END
+        else
+            echo
+            echo $BOLD"Installing Brew packages..."$END
+            echo
+            echo $BOLD$TAB$ICON_ARROW" running "$PURPLE"brew install "${packages_to_be_installed[*]}$END
+            if brew install ${packages_to_be_installed[@]}; then
+                packages_installed=(${packages_to_be_installed[@]})
+                echo
+                echo $ICON_CHECK$BOLD" Newly installed packages: "$CYAN${packages_installed[*]}$END
+            fi
         fi
     fi
 fi
