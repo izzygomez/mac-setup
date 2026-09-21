@@ -30,6 +30,7 @@ casks_to_install=(
     'ngrok'
     'notion'
     'raspberry-pi-imager'
+    'realvnc-connect-viewer'
     'rectangle'
     'rocket'
     'samsung-magician'
@@ -45,7 +46,6 @@ casks_to_install=(
     'vanilla'
     'visual-studio-code'
     'vlc'
-    'vnc-viewer'
     'yubico-authenticator' # replaced now-deprecated 'yubico-yubikey-manager'
     'zoom'
 )
