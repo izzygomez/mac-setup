@@ -44,7 +44,6 @@ casks_to_install=(
     'trezor-bridge-app'
     'trezor-suite'
     'vanilla'
-    'visual-studio-code'
     'vlc'
     'yubico-authenticator' # replaced now-deprecated 'yubico-yubikey-manager'
     'zoom'
