@@ -60,6 +60,15 @@ if ! command -v brew &>/dev/null; then
     exit 1
 fi
 
+### Require an interactive terminal
+# brew only prompts for confirmation when both stdin & stdout are ttys, so
+# piping either one would run every upgrade unattended. The menu below also
+# needs a controlling terminal for its `read -s`.
+if [[ ! -t 0 || ! -t 1 ]]; then
+    echo $ICON_ERROR$BOLD$RED" This script requires an interactive terminal."$END
+    exit 1
+fi
+
 echo $GREEN$BOLD'
              ___   ___   ____  _
             | |_) | |_) | |_  \ \    /
