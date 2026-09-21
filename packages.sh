@@ -22,6 +22,7 @@ packages_to_install=(
     'htop'
     'imagemagick'
     'ipython'
+    'jq'   # https://jqlang.org/
     'kubo' # formerly called 'ipfs'
     'less'
     'libusb'
